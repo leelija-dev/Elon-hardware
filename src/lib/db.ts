@@ -1,8 +1,8 @@
 import "server-only";
-import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 import { SCHEMA } from "./schema";
+import { Database } from "./sqlite";
 import { seedDatabase } from "./seed";
 
 /**
@@ -14,10 +14,10 @@ export const DB_PATH = path.resolve(process.env.DATABASE_PATH || "./data/elon.db
 
 
 declare global {
-  var __elonDb: Database.Database | undefined;
+  var __elonDb: Database | undefined;
 }
 
-function open(): Database.Database {
+function open(): Database {
   fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
@@ -28,7 +28,7 @@ function open(): Database.Database {
   return db;
 }
 
-export function db(): Database.Database {
+export function db(): Database {
   // Reuse one connection per server process (and across dev hot reloads).
   if (!globalThis.__elonDb) globalThis.__elonDb = open();
   return globalThis.__elonDb;

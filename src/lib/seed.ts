@@ -1,9 +1,9 @@
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite";
 import { categories, ranges } from "@/data/catalogue";
 import { products } from "@/data/products";
 
 /** Inserts the starter catalogue from src/data into an empty database. */
-export function seedDatabase(db: Database.Database) {
+export function seedDatabase(db: Database) {
   const now = new Date().toISOString();
   const insRange = db.prepare(
     `INSERT OR REPLACE INTO ranges (slug,name,short,description,image,image_bg,hero_title,hero_accent,hero_text,sort)

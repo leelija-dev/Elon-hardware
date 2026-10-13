@@ -2,7 +2,7 @@
   "name": "elon-hardware",
   "version": "1.0.0",
   "private": true,
-  "description": "ELON HARDWARE \u2014 digital home lockers website (Next.js)",
+  "description": "ELON HARDWARE — digital home lockers website (Next.js)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +12,6 @@
     "db:reset": "tsx scripts/db-reset.ts"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
     "next": "^16.4.0",
     "nodemailer": "^10.1.0",
     "react": "^19.3.0",
@@ -22,7 +21,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.5",
     "@types/nodemailer": "^8.0.2",
     "@types/react": "^19.3.0",
@@ -34,6 +32,6 @@
     "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22.13"
   }
 }

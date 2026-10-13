@@ -1,6 +1,6 @@
 # ELON HARDWARE — Website
 
-Dynamic website for **ELON HARDWARE** (home lockers, digital access solutions, architectural hardware, kitchen & wardrobe fittings, bath and glass hardware), built with **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4** and a **SQLite** database.
+Dynamic website for **ELON HARDWARE** (home lockers, digital access solutions, architectural hardware, kitchen & wardrobe fittings, bath and glass hardware), built with **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4** and a **SQLite** database (Node’s built-in `node:sqlite` — no native modules to compile).
 
 ## Features
 
@@ -24,7 +24,7 @@ No cart or payment — the site is for browsing and enquiries.
 
 ## Quick start
 
-Requirements: **Node.js 20.9+** (22 LTS recommended).
+Requirements: **Node.js 22.13 or newer** (Node 24 LTS recommended). Node may print an “SQLite is an experimental feature” warning on start-up — it is harmless.
 
 ```bash
 npm install

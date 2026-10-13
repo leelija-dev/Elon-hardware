@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
     qualities: [75, 85],
     localPatterns: [{ pathname: "/images/**" }, { pathname: "/uploads/**" }],
   },
-  serverExternalPackages: ["better-sqlite3"],
   poweredByHeader: false,
   experimental: {
     // Allow product photo uploads from the admin panel.

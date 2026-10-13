@@ -3,11 +3,11 @@
  *   npm run db:reset            → wipes products/categories/ranges and re-seeds (keeps enquiries)
  *   npm run db:reset -- --all   → deletes the whole database file, including enquiries
  */
-import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 import { SCHEMA } from "../src/lib/schema";
 import { seedDatabase } from "../src/lib/seed";
+import { Database } from "../src/lib/sqlite";
 
 const file = path.resolve(process.env.DATABASE_PATH || "./data/elon.db");
 const all = process.argv.includes("--all");
@@ -24,4 +24,5 @@ seedDatabase(db);
 const n = (t: string) => (db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n;
 console.log(`Database ready at ${file}`);
 console.log(`  ranges: ${n("ranges")}, categories: ${n("categories")}, products: ${n("products")}, enquiries: ${n("enquiries")}`);
+db.pragma("journal_mode = DELETE");
 db.close();
