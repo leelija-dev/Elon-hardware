@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { site } from "@/config/site";
 import { Icon, Logo, Star } from "./Icon";
 
@@ -39,7 +40,19 @@ export function Footer() {
       <div className="container-site">
         <div className="grid gap-10 border-t border-ink-line pt-12 pb-10 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div>
-            <Logo dark />
+              <Link
+                  href="/"
+                  aria-label="ELON HARDWARE — home"
+                  className="inline-block rounded-xl px-2 py-2"
+                >
+                  <Image
+                    src="/images/logo/footer-logo.png"
+                    alt="ELON HARDWARE logo"
+                    width={448}
+                    height={250}
+                    className="h-16 w-auto sm:h-20"
+                  />
+              </Link>
             <p className="mt-6 text-[17px]">{site.tagline}</p>
             {socials.length > 0 && (
               <div className="mt-5 flex gap-4 text-[14px] text-fog">

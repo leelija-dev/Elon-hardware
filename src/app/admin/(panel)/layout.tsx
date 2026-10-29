@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Logo } from "@/components/Icon";
 import { requireAdmin } from "@/lib/auth";
 import { enquiryCounts } from "@/lib/enquiries";
@@ -22,7 +23,14 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     <div className="min-h-screen bg-mist lg:grid lg:grid-cols-[240px_1fr]">
       <aside className="bg-ink p-6 text-white lg:sticky lg:top-0 lg:h-screen">
         <Link href="/admin">
-          <Logo dark />
+         <Image
+            src="/images/logo/footer-logo.png"
+            alt="ELON HARDWARE logo"
+            width={448}
+            height={200}
+            priority
+            className="h-18 w-auto"
+          />
         </Link>
         <nav aria-label="Admin" className="mt-10 flex flex-wrap gap-1 lg:flex-col">
           {nav.map((n) => (

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icon, Logo } from "./Icon";
 import { SearchBox } from "./SearchBox";
-
+import Image from "next/image";
 export type NavRange = {
   slug: string;
   name: string;
@@ -72,7 +72,14 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
       <div className="border-b border-line bg-white">
         <div className="container-site flex items-center justify-between gap-6 py-4">
           <Link href="/" aria-label="ELON HARDWARE — home" className="shrink-0">
-            <Logo />
+           <Image
+            src="/images/logo/logo.png"
+            alt="ELON HARDWARE logo"
+            width={448}
+            height={250}
+            className="h-12 w-auto"
+          />
+  
           </Link>
 
           <nav aria-label="Main" className="hidden items-center gap-7 xl:flex 2xl:gap-11">
@@ -184,7 +191,15 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
           <button type="button" aria-label="Close menu" className="absolute inset-0 bg-ink/60" onClick={() => setMobileOpen(false)} />
           <div className="absolute inset-y-0 right-0 flex w-[min(380px,90vw)] flex-col overflow-y-auto bg-white">
             <div className="flex items-center justify-between border-b border-line p-5">
-              <Logo />
+              <Link href="/" aria-label="ELON HARDWARE — home" onClick={() => setMobileOpen(false)}>
+                <Image
+                  src="/images/logo/logo.png"
+                  alt="ELON HARDWARE logo"
+                  width={448}
+                  height={250}
+                  className="h-14 w-auto"
+                />
+              </Link>
               <button
                 type="button"
                 aria-label="Close menu"
