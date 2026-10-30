@@ -25,9 +25,10 @@ function bind(args: Bindable[]): (Param[] | Record<string, Param>)[] {
 }
 
 export class Statement {
-  constructor(private sql: string, private pool: mysql.Pool) {}
+  constructor(private sql: string, private pool: mysql.Pool, private isBuildPhase = false) {}
 
   async get(...args: Bindable[]): Promise<Record<string, unknown> | undefined> {
+    if (this.isBuildPhase) return undefined;
     const conn = await this.pool.getConnection();
     try {
       const [rows] = await conn.execute(this.sql, bind(args));
@@ -39,6 +40,7 @@ export class Statement {
   }
 
   async all(...args: Bindable[]): Promise<Record<string, unknown>[]> {
+    if (this.isBuildPhase) return [];
     const conn = await this.pool.getConnection();
     try {
       const [rows] = await conn.execute(this.sql, bind(args));
@@ -49,6 +51,7 @@ export class Statement {
   }
 
   async run(...args: Bindable[]): Promise<mysql.ResultSetHeader> {
+    if (this.isBuildPhase) return { affectedRows: 0, insertId: 0 } as mysql.ResultSetHeader;
     const conn = await this.pool.getConnection();
     try {
       const [result] = await conn.execute(this.sql, bind(args));
@@ -61,8 +64,10 @@ export class Statement {
 
 export class Database {
   private pool: mysql.Pool;
+  public isBuildPhase: boolean;
 
-  constructor(config: mysql.ConnectionOptions) {
+  constructor(config: mysql.ConnectionOptions, isBuildPhase = false) {
+    this.isBuildPhase = isBuildPhase;
     this.pool = mysql.createPool({
       ...config,
       waitForConnections: true,
@@ -73,7 +78,7 @@ export class Database {
   }
 
   prepare(sql: string) {
-    return new Statement(sql, this.pool);
+    return new Statement(sql, this.pool, this.isBuildPhase);
   }
 
   async exec(sql: string) {

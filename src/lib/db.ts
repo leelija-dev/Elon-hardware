@@ -11,6 +11,16 @@ import { seedDatabase } from "./seed";
 declare global {
   var __elonDb: Database | undefined;
   var __elonDbInitialized: boolean;
+  var __isBuildPhase: boolean;
+}
+
+// Detect build phase once
+if (typeof globalThis.__isBuildPhase === 'undefined') {
+  globalThis.__isBuildPhase = 
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    process.env.BUILD_PHASE === 'true';
 }
 
 function open(): Database {
@@ -23,10 +33,10 @@ function open(): Database {
     charset: "utf8mb4",
   };
 
-  const db = new Database(config);
+  const db = new Database(config, globalThis.__isBuildPhase);
 
-  // Initialize schema (async but fire-and-forget)
-  if (!globalThis.__elonDbInitialized) {
+  // Initialize schema only at runtime, not during build
+  if (!globalThis.__elonDbInitialized && !globalThis.__isBuildPhase) {
     (async () => {
       try {
         for (const statement of SCHEMA) {
@@ -48,6 +58,10 @@ export function db(): Database {
   // Reuse one connection per server process (and across dev hot reloads).
   if (!globalThis.__elonDb) globalThis.__elonDb = open();
   return globalThis.__elonDb;
+}
+
+export function isBuildPhase(): boolean {
+  return globalThis.__isBuildPhase;
 }
 
 export const json = {
