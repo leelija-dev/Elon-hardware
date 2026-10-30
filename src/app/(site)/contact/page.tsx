@@ -34,7 +34,7 @@ const faqs = [
   },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
   const channels: { icon: IconName; label: string; value: string; note: string; href?: string }[] = [
     { icon: "phone", label: "Call us", value: site.phone, note: site.hours, href: site.phoneHref },
     { icon: "chat", label: "WhatsApp", value: site.whatsapp, note: "Quick answers & photos", href: site.whatsappHref },
@@ -62,7 +62,7 @@ export default function ContactPage() {
         <div className="rounded-[4px] border border-line p-6 md:p-10">
           <div className="eyebrow">Send us a message</div>
           <h2 className="display-sm mt-3 mb-8">How can we help?</h2>
-          <EnquiryForm products={getProductOptions()} categories={getCategories()} defaultType="general" variant="full" />
+          <EnquiryForm products={await getProductOptions()} categories={await getCategories()} defaultType="general" variant="full" />
         </div>
         <aside className="space-y-4">
           {channels.map((c) => {

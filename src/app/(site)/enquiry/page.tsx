@@ -24,8 +24,8 @@ export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry"
   const one = (k: string) => (Array.isArray(sp[k]) ? sp[k]![0] : (sp[k] as string | undefined));
   const typeParam = one("type");
   const type: EnquiryType = typeParam && typeParam in ENQUIRY_TYPES ? (typeParam as EnquiryType) : "quote";
-  const product = one("product") ? getProduct(one("product")!) : null;
-  const interest = one("interest") ? getCategory(one("interest")!) : null;
+  const product = one("product") ? await getProduct(one("product")!) : null;
+  const interest = one("interest") ? await getCategory(one("interest")!) : null;
 
   const title =
     type === "demo" ? "Book a free" : type === "service" ? "Raise a" : product ? "Enquire about" : "Submit a";
@@ -49,8 +49,8 @@ export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry"
         <div className="rounded-[4px] border border-line p-6 md:p-10">
           <EnquiryForm
             key={`${type}-${product?.slug ?? ""}-${interest?.slug ?? ""}`}
-            products={getProductOptions()}
-            categories={getCategories()}
+            products={await getProductOptions()}
+            categories={await getCategories()}
             defaultType={type}
             defaultProduct={product?.slug}
             defaultInterest={interest?.slug}

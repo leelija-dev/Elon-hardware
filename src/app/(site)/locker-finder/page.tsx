@@ -101,7 +101,7 @@ export default async function LockerFinderPage({ searchParams }: PageProps<"/loc
   const pick = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
   const answers: Answers = { what: pick("what"), where: pick("where"), access: pick("access") };
   const answered = Object.values(answers).some(Boolean);
-  const lockers = getAllProducts().filter((p) => p.locker);
+  const lockers = (await getAllProducts()).filter((p) => p.locker);
   const results = answered ? recommend(lockers, answers) : [];
 
   return (

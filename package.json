@@ -5,14 +5,15 @@
   "description": "ELON HARDWARE — digital home lockers website (Next.js)",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:reset": "tsx scripts/db-reset.ts"
   },
   "dependencies": {
-    "next": "^16.4.0",
+    "mysql2": "^3.24.6",
+    "next": "^16.4.3",
     "nodemailer": "^10.1.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

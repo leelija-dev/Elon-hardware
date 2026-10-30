@@ -12,7 +12,7 @@ import { FINISHES } from "@/lib/constants";
 import { getCategory, getProduct, getProductOptions, getRelatedProducts } from "@/lib/catalog";
 
 export async function generateMetadata({ params }: PageProps<"/product/[slug]">): Promise<Metadata> {
-  const p = getProduct((await params).slug);
+  const p = await getProduct((await params).slug);
   if (!p) return {};
   return {
     title: `${p.name} — ${p.subtitle}`,
@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: PageProps<"/product/[slug]">)
 }
 
 export default async function ProductPage({ params }: PageProps<"/product/[slug]">) {
-  const p = getProduct((await params).slug);
+  const p = await getProduct((await params).slug);
   if (!p) notFound();
-  const category = getCategory(p.category);
-  const related = getRelatedProducts(p, 4);
+  const category = await getCategory(p.category);
+  const related = await getRelatedProducts(p, 4);
   const keySpecs = p.locker
     ? [
         { label: "Capacity", value: `${p.locker.volume} L` },
@@ -193,7 +193,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             </p>
           </div>
           <div className="rounded-[4px] bg-white p-6 text-text md:p-8">
-            <EnquiryForm products={getProductOptions()} defaultType="quote" defaultProduct={p.slug} variant="product" />
+            <EnquiryForm products={await getProductOptions()} defaultType="quote" defaultProduct={p.slug} variant="product" />
           </div>
         </div>
       </section>

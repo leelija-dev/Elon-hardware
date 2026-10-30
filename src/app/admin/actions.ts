@@ -72,7 +72,7 @@ export async function saveProductAction(_: FormState, fd: FormData): Promise<For
   if (!name) return { error: "Name is required." };
   const slug = slugify(str(fd, "slug") || name);
   if (!slug) return { error: "Please enter a valid URL slug." };
-  if (slug !== original && slugExists(slug)) return { error: `Another product already uses the URL “${slug}”.` };
+  if (slug !== original && await slugExists(slug)) return { error: `Another product already uses the URL “${slug}”.` };
   const category = str(fd, "category");
   if (!category) return { error: "Choose a category." };
 
@@ -121,7 +121,7 @@ export async function saveProductAction(_: FormState, fd: FormData): Promise<For
         }
       : undefined;
 
-  const existing = original ? adminGetProduct(original) : null;
+  const existing = original ? await adminGetProduct(original) : null;
   const product: AdminProduct = {
     slug,
     name,
@@ -146,7 +146,7 @@ export async function saveProductAction(_: FormState, fd: FormData): Promise<For
   };
 
   try {
-    saveProduct(product, original);
+    await saveProduct(product, original);
   } catch (e) {
     return { error: `Could not save: ${(e as Error).message}` };
   }

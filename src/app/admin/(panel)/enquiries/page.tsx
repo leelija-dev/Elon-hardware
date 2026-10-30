@@ -10,8 +10,8 @@ export default async function EnquiriesPage({ searchParams }: PageProps<"/admin/
   const sp = await searchParams;
   const status = typeof sp.status === "string" ? sp.status : undefined;
   const q = typeof sp.q === "string" ? sp.q : undefined;
-  const items = listEnquiries({ status, q });
-  const counts = enquiryCounts();
+  const items = await listEnquiries({ status, q });
+  const counts = await enquiryCounts();
   const tab = (s?: string) =>
     `rounded-full px-4 py-2 text-[14px] ${status === s ? "bg-ink text-white" : "bg-white hover:bg-mist-2"}`;
 

@@ -12,10 +12,10 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
   const { slug } = await params;
   const sp = await searchParams;
   const isNew = slug === "new";
-  const p = isNew ? null : adminGetProduct(slug);
+  const p = isNew ? null : await adminGetProduct(slug);
   if (!isNew && !p) notFound();
-  const cats = adminListCategories();
-  const ranges = adminListRanges();
+  const cats = await adminListCategories();
+  const ranges = await adminListRanges();
   const preselect = typeof sp.category === "string" ? sp.category : undefined;
 
   const specsText = (p?.specs ?? []).map((s) => `${s.label}: ${s.value}`).join("\n");

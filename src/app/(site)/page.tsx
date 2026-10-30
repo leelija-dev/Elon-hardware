@@ -32,8 +32,8 @@ const tabCopy: Record<string, { title: string; text: string; images: string[] }>
   },
 };
 
-export default function HomePage() {
-  const ranges = getRanges();
+export default async function HomePage() {
+  const ranges = await getRanges();
   const tabs = ranges
     .filter((r) => tabCopy[r.slug])
     .map((r) => ({

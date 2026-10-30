@@ -102,8 +102,8 @@ async function postWebhook(e: StoredEnquiry) {
  * The database write is the source of truth; notification failures are logged only.
  */
 export async function submitEnquiry(data: EnquiryData, meta: { ip?: string; userAgent?: string }) {
-  const product = data.product ? getProduct(data.product) : null;
-  const interestCat = data.interest ? getCategory(data.interest) : null;
+  const product = data.product ? await getProduct(data.product) : null;
+  const interestCat = data.interest ? await getCategory(data.interest) : null;
   const e: StoredEnquiry = {
     id: newId(),
     createdAt: new Date().toISOString(),
@@ -125,7 +125,7 @@ export async function submitEnquiry(data: EnquiryData, meta: { ip?: string; user
     status: "new",
   };
 
-  db()
+  await db()
     .prepare(
       `INSERT INTO enquiries (id,created_at,type,name,phone,email,city,pincode,product_slug,product_name,interest,slot,message,whatsapp,page,ip,user_agent,status)
        VALUES (@id,@createdAt,@type,@name,@phone,@email,@city,@pincode,@product,@productName,@interest,@slot,@message,@whatsapp,@page,@ip,@userAgent,'new')`,
@@ -178,7 +178,7 @@ function toEnquiry(r: Row): StoredEnquiry {
   };
 }
 
-export function listEnquiries(filter: { status?: string; q?: string } = {}): StoredEnquiry[] {
+export async function listEnquiries(filter: { status?: string; q?: string } = {}): Promise<StoredEnquiry[]> {
   const where: string[] = [];
   const args: string[] = [];
   if (filter.status && ["new", "contacted", "closed"].includes(filter.status)) {
@@ -190,14 +190,14 @@ export function listEnquiries(filter: { status?: string; q?: string } = {}): Sto
     const like = `%${filter.q}%`;
     args.push(like, like, like, like, like, like);
   }
-  const rows = db()
+  const rows = await db()
     .prepare(`SELECT * FROM enquiries ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY created_at DESC`)
     .all(...args) as Row[];
   return rows.map(toEnquiry);
 }
 
-export function enquiryCounts() {
-  const rows = db().prepare("SELECT status, COUNT(*) AS n FROM enquiries GROUP BY status").all() as {
+export async function enquiryCounts() {
+  const rows = await db().prepare("SELECT status, COUNT(*) AS n FROM enquiries GROUP BY status").all() as {
     status: string;
     n: number;
   }[];
@@ -209,10 +209,10 @@ export function enquiryCounts() {
   return out;
 }
 
-export function updateEnquiry(id: string, status: EnquiryStatus, notes?: string) {
-  db().prepare("UPDATE enquiries SET status = ?, notes = ? WHERE id = ?").run(status, notes ?? null, id);
+export async function updateEnquiry(id: string, status: EnquiryStatus, notes?: string) {
+  await db().prepare("UPDATE enquiries SET status = ?, notes = ? WHERE id = ?").run(status, notes ?? null, id);
 }
 
-export function deleteEnquiry(id: string) {
-  db().prepare("DELETE FROM enquiries WHERE id = ?").run(id);
+export async function deleteEnquiry(id: string) {
+  await db().prepare("DELETE FROM enquiries WHERE id = ?").run(id);
 }

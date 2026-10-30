@@ -77,8 +77,8 @@ function CategoryFields({ c, ranges }: { c?: Row; ranges: Row[] }) {
 
 export default async function AdminCategories({ searchParams }: PageProps<"/admin/categories">) {
   const sp = await searchParams;
-  const cats = adminListCategories();
-  const ranges = adminListRanges();
+  const cats = await adminListCategories();
+  const ranges = await adminListRanges();
   return (
     <div className="max-w-5xl">
       <h1 className="font-serif text-[34px]">Categories</h1>

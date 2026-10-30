@@ -28,7 +28,7 @@ const care = [
   "For door hardware, check and tighten screws once a year to keep the action smooth.",
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
   return (
     <>
       <PageHero
@@ -71,7 +71,7 @@ export default function ServicesPage() {
           </ul>
         </div>
         <div className="rounded-[4px] border border-line p-6 md:p-8">
-          <EnquiryForm products={getProductOptions()} defaultType="service" showTypeTabs={false} variant="full" />
+          <EnquiryForm products={await getProductOptions()} defaultType="service" showTypeTabs={false} variant="full" />
         </div>
       </section>
 

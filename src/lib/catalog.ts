@@ -94,21 +94,22 @@ function view(p: Product, cats: Map<string, Category>, rangesBySlug: Map<string,
 
 /* ---------------- reads ---------------- */
 
-export function getRanges(): (Range & { count: number; categories: (Category & { count: number })[] })[] {
-  const ranges = (db().prepare("SELECT * FROM ranges ORDER BY sort, name").all() as RangeRow[]).map(toRange);
-  const cats = getCategories();
+export async function getRanges(): Promise<(Range & { count: number; categories: (Category & { count: number })[] })[]> {
+  const ranges = (await db().prepare("SELECT * FROM ranges ORDER BY sort, name").all() as RangeRow[]).map(toRange);
+  const cats = await getCategories();
   return ranges.map((r) => {
     const rc = cats.filter((c) => c.range === r.slug);
     return { ...r, categories: rc, count: rc.reduce((n, c) => n + c.count, 0) };
   });
 }
 
-export function getRange(slug: string) {
-  return getRanges().find((r) => r.slug === slug) ?? null;
+export async function getRange(slug: string) {
+  const ranges = await getRanges();
+  return ranges.find((r) => r.slug === slug) ?? null;
 }
 
-export function getCategories(rangeSlug?: string): (Category & { count: number })[] {
-  const rows = db()
+export async function getCategories(rangeSlug?: string): Promise<(Category & { count: number })[]> {
+  const rows = await db()
     .prepare(
       `SELECT c.*, (SELECT COUNT(*) FROM products p WHERE p.category_slug = c.slug AND p.status = 'published') AS count
        FROM categories c ${rangeSlug ? "WHERE c.range_slug = ?" : ""} ORDER BY c.sort, c.name`,
@@ -117,43 +118,45 @@ export function getCategories(rangeSlug?: string): (Category & { count: number }
   return rows.map((r) => ({ ...toCategory(r), count: Number(r.count) }));
 }
 
-export function getCategory(slug: string) {
-  return getCategories().find((c) => c.slug === slug) ?? null;
+export async function getCategory(slug: string) {
+  const cats = await getCategories();
+  return cats.find((c) => c.slug === slug) ?? null;
 }
 
-function maps() {
-  const cats = new Map(getCategories().map((c) => [c.slug, c as Category]));
+async function maps() {
+  const cats = new Map((await getCategories()).map((c) => [c.slug, c as Category]));
   const ranges = new Map(
-    (db().prepare("SELECT * FROM ranges").all() as RangeRow[]).map((r) => [r.slug as string, toRange(r)]),
+    (await db().prepare("SELECT * FROM ranges").all() as RangeRow[]).map((r) => [r.slug as string, toRange(r)]),
   );
   return { cats, ranges };
 }
 
-export function getAllProducts(): ProductView[] {
-  const { cats, ranges } = maps();
-  return (db().prepare("SELECT * FROM products WHERE status = 'published'").all() as ProductRow[]).map((r) =>
+export async function getAllProducts(): Promise<ProductView[]> {
+  const { cats, ranges } = await maps();
+  return (await db().prepare("SELECT * FROM products WHERE status = 'published'").all() as ProductRow[]).map((r) =>
     view(rowToProduct(r), cats, ranges),
   );
 }
 
-export function getProduct(slug: string): ProductView | null {
-  const r = db().prepare("SELECT * FROM products WHERE slug = ? AND status = 'published'").get(slug) as
+export async function getProduct(slug: string): Promise<ProductView | null> {
+  const r = await db().prepare("SELECT * FROM products WHERE slug = ? AND status = 'published'").get(slug) as
     | ProductRow
     | undefined;
   if (!r) return null;
-  const { cats, ranges } = maps();
+  const { cats, ranges } = await maps();
   return view(rowToProduct(r), cats, ranges);
 }
 
-export function getFeaturedProducts(limit = 8, categorySlug?: string): ProductView[] {
-  return getAllProducts()
+export async function getFeaturedProducts(limit = 8, categorySlug?: string): Promise<ProductView[]> {
+  const products = await getAllProducts();
+  return products
     .filter((p) => p.featured && (!categorySlug || p.category === categorySlug))
     .sort((a, b) => b.rank - a.rank)
     .slice(0, limit);
 }
 
-export function getRelatedProducts(p: ProductView, limit = 4): ProductView[] {
-  const others = getAllProducts().filter((x) => x.slug !== p.slug);
+export async function getRelatedProducts(p: ProductView, limit = 4): Promise<ProductView[]> {
+  const others = (await getAllProducts()).filter((x) => x.slug !== p.slug);
   const same = others.filter((x) => x.category === p.category).sort((a, b) => b.rank - a.rank);
   const near = others
     .filter((x) => x.category !== p.category && x.rangeSlug === p.rangeSlug)
@@ -162,8 +165,9 @@ export function getRelatedProducts(p: ProductView, limit = 4): ProductView[] {
 }
 
 /** Products for dropdowns (enquiry forms). */
-export function getProductOptions() {
-  return getAllProducts()
+export async function getProductOptions() {
+  const products = await getAllProducts();
+  return products
     .sort((a, b) => a.categoryName.localeCompare(b.categoryName) || a.name.localeCompare(b.name, "en", { numeric: true }))
     .map((p) => ({ slug: p.slug, name: p.name, category: p.categoryName }));
 }
@@ -223,9 +227,9 @@ function score(p: ProductView, q: string): number {
   return total;
 }
 
-export function searchProducts(query: ProductQuery) {
+export async function searchProducts(query: ProductQuery) {
   const perPage = query.perPage ?? 12;
-  let list = getAllProducts()
+  let list = (await getAllProducts())
     .map((p) => ({ p, s: query.q ? score(p, query.q) : 1 }))
     .filter((x) => x.s > 0);
 
@@ -261,8 +265,8 @@ export function searchProducts(query: ProductQuery) {
 }
 
 /** Which filter options exist (and how many products) for the current listing. */
-export function facets(query: ProductQuery) {
-  const base = searchProducts({ q: query.q, range: query.range, category: query.category, perPage: 10_000 }).items;
+export async function facets(query: ProductQuery) {
+  const base = (await searchProducts({ q: query.q, range: query.range, category: query.category, perPage: 10_000 })).items;
   const finish: Partial<Record<FinishKey, number>> = {};
   const access: Partial<Record<AccessMode, number>> = {};
   const capacity: Partial<Record<CapacityBand, number>> = {};

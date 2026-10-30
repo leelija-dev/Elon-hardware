@@ -19,7 +19,7 @@ export function slugify(s: string) {
     .slice(0, 80);
 }
 
-export function adminListProducts(filter: { q?: string; category?: string; status?: string } = {}) {
+export async function adminListProducts(filter: { q?: string; category?: string; status?: string } = {}) {
   const where: string[] = [];
   const args: string[] = [];
   if (filter.category) {
@@ -34,22 +34,22 @@ export function adminListProducts(filter: { q?: string; category?: string; statu
     where.push("(name LIKE ? OR code LIKE ? OR slug LIKE ?)");
     args.push(`%${filter.q}%`, `%${filter.q}%`, `%${filter.q}%`);
   }
-  const rows = db()
+  const rows = await db()
     .prepare(`SELECT * FROM products ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY category_slug, rank DESC, name`)
     .all(...args) as ProductRow[];
   return rows.map((r) => ({ ...rowToProduct(r), updatedAt: r.updated_at as string }));
 }
 
-export function adminGetProduct(slug: string): AdminProduct | null {
-  const r = db().prepare("SELECT * FROM products WHERE slug = ?").get(slug) as ProductRow | undefined;
+export async function adminGetProduct(slug: string): Promise<AdminProduct | null> {
+  const r = await db().prepare("SELECT * FROM products WHERE slug = ?").get(slug) as ProductRow | undefined;
   return r ? { ...rowToProduct(r), updatedAt: r.updated_at as string } : null;
 }
 
-export function slugExists(slug: string) {
-  return !!db().prepare("SELECT 1 FROM products WHERE slug = ?").get(slug);
+export async function slugExists(slug: string) {
+  return !!(await db().prepare("SELECT 1 FROM products WHERE slug = ?").get(slug));
 }
 
-export function saveProduct(p: AdminProduct, originalSlug?: string) {
+export async function saveProduct(p: AdminProduct, originalSlug?: string) {
   const row = {
     slug: p.slug,
     name: p.name,
@@ -75,7 +75,7 @@ export function saveProduct(p: AdminProduct, originalSlug?: string) {
     original: originalSlug ?? p.slug,
   };
   if (originalSlug) {
-    db()
+    await db()
       .prepare(
         `UPDATE products SET slug=@slug,name=@name,code=@code,category_slug=@category,subtitle=@subtitle,summary=@summary,description=@description,
          images=@images,finishes=@finishes,specs=@specs,features=@features,groups_json=@groups,suitable_for=@suitableFor,tags=@tags,locker=@locker,
@@ -83,7 +83,7 @@ export function saveProduct(p: AdminProduct, originalSlug?: string) {
       )
       .run(row);
   } else {
-    db()
+    await db()
       .prepare(
         `INSERT INTO products (slug,name,code,category_slug,subtitle,summary,description,images,finishes,specs,features,groups_json,suitable_for,tags,locker,badge,featured,rank,status,added_on,updated_at)
          VALUES (@slug,@name,@code,@category,@subtitle,@summary,@description,@images,@finishes,@specs,@features,@groups,@suitableFor,@tags,@locker,@badge,@featured,@rank,@status,@addedOn,@now)`,
@@ -92,16 +92,16 @@ export function saveProduct(p: AdminProduct, originalSlug?: string) {
   }
 }
 
-export function deleteProduct(slug: string) {
-  db().prepare("DELETE FROM products WHERE slug = ?").run(slug);
+export async function deleteProduct(slug: string) {
+  await db().prepare("DELETE FROM products WHERE slug = ?").run(slug);
 }
 
 /* ---------- categories & ranges ---------- */
 
 type Row = Record<string, string | number | null>;
 
-export function adminListCategories() {
-  return db()
+export async function adminListCategories() {
+  return await db()
     .prepare(
       `SELECT c.*, (SELECT COUNT(*) FROM products p WHERE p.category_slug = c.slug) AS product_count
        FROM categories c ORDER BY (SELECT sort FROM ranges r WHERE r.slug = c.range_slug), c.sort, c.name`,
@@ -109,13 +109,13 @@ export function adminListCategories() {
     .all() as Row[];
 }
 
-export function adminListRanges() {
-  return db().prepare("SELECT * FROM ranges ORDER BY sort, name").all() as Row[];
+export async function adminListRanges() {
+  return await db().prepare("SELECT * FROM ranges ORDER BY sort, name").all() as Row[];
 }
 
-export function upsertCategory(c: Record<string, string | number | null>, originalSlug?: string) {
+export async function upsertCategory(c: Record<string, string | number | null>, originalSlug?: string) {
   if (originalSlug) {
-    db()
+    await db()
       .prepare(
         `UPDATE categories SET slug=@slug,range_slug=@range_slug,name=@name,short=@short,description=@description,tile=@tile,
          hero_eyebrow=@hero_eyebrow,hero_title=@hero_title,hero_accent=@hero_accent,hero_text=@hero_text,hero_image=@hero_image,
@@ -124,7 +124,7 @@ export function upsertCategory(c: Record<string, string | number | null>, origin
       )
       .run({ ...c, original: originalSlug });
   } else {
-    db()
+    await db()
       .prepare(
         `INSERT INTO categories (slug,range_slug,name,short,description,tile,hero_eyebrow,hero_title,hero_accent,hero_text,hero_image,hero_caption,section_eyebrow,section_title,item_noun,sort)
          VALUES (@slug,@range_slug,@name,@short,@description,@tile,@hero_eyebrow,@hero_title,@hero_accent,@hero_text,@hero_image,@hero_caption,@section_eyebrow,@section_title,@item_noun,@sort)`,
@@ -133,14 +133,14 @@ export function upsertCategory(c: Record<string, string | number | null>, origin
   }
 }
 
-export function deleteCategory(slug: string) {
-  const { n } = db().prepare("SELECT COUNT(*) AS n FROM products WHERE category_slug = ?").get(slug) as { n: number };
+export async function deleteCategory(slug: string) {
+  const { n } = await db().prepare("SELECT COUNT(*) AS n FROM products WHERE category_slug = ?").get(slug) as { n: number };
   if (n > 0) throw new Error(`Move or delete the ${n} product(s) in this category first.`);
-  db().prepare("DELETE FROM categories WHERE slug = ?").run(slug);
+  await db().prepare("DELETE FROM categories WHERE slug = ?").run(slug);
 }
 
-export function updateRange(r: Record<string, string | number | null>) {
-  db()
+export async function updateRange(r: Record<string, string | number | null>) {
+  await db()
     .prepare(
       `UPDATE ranges SET name=@name,short=@short,description=@description,image=@image,image_bg=@image_bg,
        hero_title=@hero_title,hero_accent=@hero_accent,hero_text=@hero_text,sort=@sort WHERE slug=@slug`,

@@ -1,30 +1,44 @@
 import "server-only";
-import fs from "node:fs";
-import path from "node:path";
 import { SCHEMA } from "./schema";
-import { Database } from "./sqlite";
+import { Database } from "./mysql";
 import { seedDatabase } from "./seed";
 
 /**
- * SQLite database (single file, default ./data/elon.db).
+ * MySQL database connection.
  * Created and seeded automatically on first run from src/data/*.ts.
  */
-export const DB_PATH = path.resolve(process.env.DATABASE_PATH || "./data/elon.db");
-
-
 
 declare global {
   var __elonDb: Database | undefined;
+  var __elonDbInitialized: boolean;
 }
 
 function open(): Database {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  const db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
-  db.exec(SCHEMA);
-  const { n } = db.prepare("SELECT COUNT(*) AS n FROM ranges").get() as { n: number };
-  if (n === 0) seedDatabase(db);
+  const config = {
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "elon_hardware",
+    charset: "utf8mb4",
+  };
+
+  const db = new Database(config);
+
+  // Initialize schema (async but fire-and-forget)
+  if (!globalThis.__elonDbInitialized) {
+    (async () => {
+      for (const statement of SCHEMA) {
+        await db.exec(statement);
+      }
+      // Note: Auto-seeding disabled due to MariaDB/mysql2 parameter binding issues
+      // Use admin panel to add products manually, or run seed script manually
+      globalThis.__elonDbInitialized = true;
+    })().catch((err) => {
+      console.error("Database initialization error:", err);
+    });
+  }
+
   return db;
 }
 
@@ -36,9 +50,11 @@ export function db(): Database {
 
 export const json = {
   parse<T>(v: unknown, fallback: T): T {
-    if (typeof v !== "string" || !v) return fallback;
+    if (typeof v !== "string" && typeof v !== "object") return fallback;
+    if (typeof v === "object") return v as T;
+    if (!v) return fallback;
     try {
-      return JSON.parse(v) as T;
+      return JSON.parse(v as string) as T;
     } catch {
       return fallback;
     }

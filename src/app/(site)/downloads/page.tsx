@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Download ELON HARDWARE catalogues and product brochures, or request one by email.",
 };
 
-export default function DownloadsPage() {
+export default async function DownloadsPage() {
   return (
     <>
       <PageHero
@@ -51,7 +51,7 @@ export default function DownloadsPage() {
                 Tell us which range you&rsquo;re interested in and we&rsquo;ll send you the current catalogue and price list.
               </p>
             </div>
-            <EnquiryForm products={getProductOptions()} categories={getCategories()} defaultType="general" variant="product" submitLabel="Send me the catalogue" />
+            <EnquiryForm products={await getProductOptions()} categories={await getCategories()} defaultType="general" variant="product" submitLabel="Send me the catalogue" />
           </div>
         )}
       </section>

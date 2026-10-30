@@ -1,83 +1,87 @@
-/** SQLite schema — applied automatically on start-up (CREATE IF NOT EXISTS). */
-export const SCHEMA = `
-CREATE TABLE IF NOT EXISTS ranges (
-  slug TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
+/** MySQL/MariaDB schema — applied automatically on start-up (CREATE IF NOT EXISTS). */
+export const SCHEMA = [
+  `CREATE TABLE IF NOT EXISTS ranges (
+  slug VARCHAR(255) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
   short TEXT NOT NULL DEFAULT '',
   description TEXT NOT NULL DEFAULT '',
-  image TEXT NOT NULL DEFAULT '',
-  image_bg TEXT,
-  hero_title TEXT,
-  hero_accent TEXT,
+  image VARCHAR(500) NOT NULL DEFAULT '',
+  image_bg VARCHAR(500),
+  hero_title VARCHAR(255),
+  hero_accent VARCHAR(255),
   hero_text TEXT,
-  sort INTEGER NOT NULL DEFAULT 0
-);
+  sort INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-CREATE TABLE IF NOT EXISTS categories (
-  slug TEXT PRIMARY KEY,
-  range_slug TEXT NOT NULL REFERENCES ranges(slug) ON UPDATE CASCADE,
-  name TEXT NOT NULL,
+  `CREATE TABLE IF NOT EXISTS categories (
+  slug VARCHAR(255) PRIMARY KEY,
+  range_slug VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
   short TEXT NOT NULL DEFAULT '',
   description TEXT NOT NULL DEFAULT '',
-  tile TEXT,
-  hero_eyebrow TEXT,
-  hero_title TEXT,
-  hero_accent TEXT,
+  tile VARCHAR(500),
+  hero_eyebrow VARCHAR(255),
+  hero_title VARCHAR(255),
+  hero_accent VARCHAR(255),
   hero_text TEXT,
-  hero_image TEXT,
+  hero_image VARCHAR(500),
   hero_caption TEXT,
-  section_eyebrow TEXT,
-  section_title TEXT,
-  item_noun TEXT,
-  guide TEXT,              -- JSON [{title,text}]
-  sort INTEGER NOT NULL DEFAULT 0
-);
+  section_eyebrow VARCHAR(255),
+  section_title VARCHAR(255),
+  item_noun VARCHAR(255),
+  guide JSON,
+  sort INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (range_slug) REFERENCES ranges(slug) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-CREATE TABLE IF NOT EXISTS products (
-  slug TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  code TEXT,
-  category_slug TEXT NOT NULL REFERENCES categories(slug) ON UPDATE CASCADE,
+  `CREATE TABLE IF NOT EXISTS products (
+  slug VARCHAR(255) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  code VARCHAR(100),
+  category_slug VARCHAR(255) NOT NULL,
   subtitle TEXT NOT NULL DEFAULT '',
   summary TEXT NOT NULL DEFAULT '',
   description TEXT NOT NULL DEFAULT '',
-  images TEXT NOT NULL DEFAULT '[]',        -- JSON string[]
-  finishes TEXT NOT NULL DEFAULT '[]',      -- JSON FinishKey[]
-  specs TEXT NOT NULL DEFAULT '[]',         -- JSON [{label,value}]
-  features TEXT NOT NULL DEFAULT '[]',      -- JSON [{title,text}]
-  groups_json TEXT NOT NULL DEFAULT '[]',   -- JSON [{title,items[]}]
-  suitable_for TEXT NOT NULL DEFAULT '[]',  -- JSON string[]
-  tags TEXT NOT NULL DEFAULT '[]',          -- JSON string[]
-  locker TEXT,                              -- JSON locker attributes
-  badge TEXT,
-  featured INTEGER NOT NULL DEFAULT 0,
-  rank INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'published', -- published | draft
-  added_on TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_slug);
+  images JSON,
+  finishes JSON,
+  specs JSON,
+  features JSON,
+  groups_json JSON,
+  suitable_for JSON,
+  tags JSON,
+  locker JSON,
+  badge VARCHAR(100),
+  featured TINYINT NOT NULL DEFAULT 0,
+  rank INT NOT NULL DEFAULT 0,
+  status VARCHAR(50) NOT NULL DEFAULT 'published',
+  added_on DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  FOREIGN KEY (category_slug) REFERENCES categories(slug) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-CREATE TABLE IF NOT EXISTS enquiries (
-  id TEXT PRIMARY KEY,
-  created_at TEXT NOT NULL,
-  type TEXT NOT NULL,
-  name TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  email TEXT,
-  city TEXT NOT NULL,
-  pincode TEXT,
-  product_slug TEXT,
-  product_name TEXT,
-  interest TEXT,
-  slot TEXT,
+  `CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_slug)`,
+
+  `CREATE TABLE IF NOT EXISTS enquiries (
+  id VARCHAR(50) PRIMARY KEY,
+  created_at DATETIME NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(50) NOT NULL,
+  email VARCHAR(255),
+  city VARCHAR(255) NOT NULL,
+  pincode VARCHAR(20),
+  product_slug VARCHAR(255),
+  product_name VARCHAR(255),
+  interest VARCHAR(255),
+  slot VARCHAR(50),
   message TEXT,
-  whatsapp INTEGER NOT NULL DEFAULT 0,
-  page TEXT,
-  ip TEXT,
+  whatsapp TINYINT NOT NULL DEFAULT 0,
+  page VARCHAR(500),
+  ip VARCHAR(50),
   user_agent TEXT,
-  status TEXT NOT NULL DEFAULT 'new',       -- new | contacted | closed
+  status VARCHAR(50) NOT NULL DEFAULT 'new',
   notes TEXT
-);
-CREATE INDEX IF NOT EXISTS idx_enquiries_created ON enquiries(created_at);
-`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE INDEX IF NOT EXISTS idx_enquiries_created ON enquiries(created_at)`,
+];

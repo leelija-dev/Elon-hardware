@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ACCESS_LABELS, CAPACITY_BANDS, FINISHES, SORT_OPTIONS } from "@/lib/constants";
-import { facets, getProductOptions, getRanges, searchProducts } from "@/lib/catalog";
 import type { AccessMode, CapacityBand, Category, FinishKey, GuideStep, ProductQuery, Range } from "@/lib/types";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { EnquiryForm } from "./EnquiryForm";
@@ -21,13 +20,14 @@ type Props = {
   range?: Range;
   category?: Category;
   basePath: string;
+  ranges: Awaited<ReturnType<typeof getRanges>>;
+  result: Awaited<ReturnType<typeof searchProducts>>;
+  facetsData: Awaited<ReturnType<typeof facets>>;
+  productOptions: Awaited<ReturnType<typeof getProductOptions>>;
 };
 
 /** The product listing page from the design: hero card, search, filters sidebar, sort, grid, guide and CTA. */
-export function ProductListing({ query, range, category, basePath }: Props) {
-  const ranges = getRanges();
-  const result = searchProducts({ ...query, perPage: 12 });
-  const f = facets(query);
+export function ProductListing({ query, range, category, basePath, ranges, result, facetsData: f, productOptions }: Props) {
   const isLockers = f.hasLockers;
   const noun = category?.itemNoun ?? (isLockers && category ? "models" : "products");
 
@@ -276,7 +276,7 @@ export function ProductListing({ query, range, category, basePath }: Props) {
           </p>
         </div>
         <EnquiryForm
-          products={getProductOptions()}
+          products={productOptions}
           defaultType="quote"
           defaultInterest={category?.slug}
           variant="product"

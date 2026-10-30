@@ -2,8 +2,8 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { getRanges } from "@/lib/catalog";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  const ranges = getRanges().map((r) => ({
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const ranges = (await getRanges()).map((r) => ({
     slug: r.slug,
     name: r.name,
     short: r.short,

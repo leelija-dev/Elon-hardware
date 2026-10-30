@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Allow product photo uploads from the admin panel.
     serverActions: { bodySizeLimit: "12mb" },
+    agentUpgrade: "security",
   },
   async redirects() {
     return [

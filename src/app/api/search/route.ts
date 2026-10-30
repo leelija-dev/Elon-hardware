@@ -4,7 +4,7 @@ import { searchProducts } from "@/lib/catalog";
 export async function GET(req: NextRequest) {
   const q = (req.nextUrl.searchParams.get("q") ?? "").slice(0, 80);
   const limit = Math.min(Math.max(Number(req.nextUrl.searchParams.get("limit")) || 6, 1), 24);
-  const { items, total } = searchProducts({ q, perPage: limit });
+  const { items, total } = await searchProducts({ q, perPage: limit });
   return NextResponse.json({
     total,
     items: items.map((p) => ({

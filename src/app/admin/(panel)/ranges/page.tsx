@@ -3,8 +3,8 @@ import { saveRangeAction } from "../../actions";
 import { ActionForm } from "../../_components/ActionForm";
 import { Field, input, textarea } from "../../_components/Field";
 
-export default function AdminRanges() {
-  const ranges = adminListRanges();
+export default async function AdminRanges() {
+  const ranges = await adminListRanges();
   return (
     <div className="max-w-5xl">
       <h1 className="font-serif text-[34px]">Product ranges</h1>

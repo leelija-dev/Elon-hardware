@@ -18,7 +18,7 @@ const nav = [
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
-  const counts = enquiryCounts();
+  const counts = await enquiryCounts();
   return (
     <div className="min-h-screen bg-mist lg:grid lg:grid-cols-[240px_1fr]">
       <aside className="bg-ink p-6 text-white lg:sticky lg:top-0 lg:h-screen">

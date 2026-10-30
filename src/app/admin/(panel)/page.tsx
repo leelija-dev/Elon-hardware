@@ -3,11 +3,11 @@ import { adminListCategories, adminListProducts } from "@/lib/admin-data";
 import { enquiryCounts, listEnquiries } from "@/lib/enquiries";
 import { ENQUIRY_TYPES } from "@/lib/enquiry-schema";
 
-export default function Dashboard() {
-  const counts = enquiryCounts();
-  const products = adminListProducts();
-  const cats = adminListCategories();
-  const recent = listEnquiries().slice(0, 6);
+export default async function Dashboard() {
+  const counts = await enquiryCounts();
+  const products = await adminListProducts();
+  const cats = await adminListCategories();
+  const recent = (await listEnquiries()).slice(0, 6);
   const stats = [
     { label: "New enquiries", value: counts.new, href: "/admin/enquiries?status=new" },
     { label: "All enquiries", value: counts.all, href: "/admin/enquiries" },

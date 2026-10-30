@@ -6,8 +6,8 @@ export default async function AdminProducts({ searchParams }: PageProps<"/admin/
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q : undefined;
   const category = typeof sp.category === "string" ? sp.category : undefined;
-  const products = adminListProducts({ q, category });
-  const cats = adminListCategories();
+  const products = await adminListProducts({ q, category });
+  const cats = await adminListCategories();
   const catName = new Map(cats.map((c) => [c.slug as string, c.name as string]));
   return (
     <div>
