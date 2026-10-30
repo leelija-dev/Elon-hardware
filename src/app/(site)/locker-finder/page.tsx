@@ -7,6 +7,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { getAllProducts } from "@/lib/catalog";
 import type { ProductView } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Locker Finder — Help Me Choose",
   description: "Answer three quick questions and find the home locker that fits what you store, where it will live and how you'll open it.",

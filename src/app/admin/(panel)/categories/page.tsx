@@ -4,6 +4,8 @@ import { deleteCategoryAction, saveCategoryAction } from "../../actions";
 import { ActionForm, ConfirmButton } from "../../_components/ActionForm";
 import { Field, input, textarea } from "../../_components/Field";
 
+export const dynamic = "force-dynamic";
+
 type Row = Record<string, string | number | null>;
 
 function CategoryFields({ c, ranges }: { c?: Row; ranges: Row[] }) {

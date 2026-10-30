@@ -2,6 +2,8 @@ import { isAdmin } from "@/lib/auth";
 import { listEnquiries } from "@/lib/enquiries";
 import { DEMO_SLOTS, ENQUIRY_TYPES } from "@/lib/enquiry-schema";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   if (!(await isAdmin())) return new Response("Unauthorised", { status: 401 });
   const status = new URL(req.url).searchParams.get("status") ?? undefined;

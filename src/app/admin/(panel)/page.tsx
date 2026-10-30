@@ -3,6 +3,8 @@ import { adminListCategories, adminListProducts } from "@/lib/admin-data";
 import { enquiryCounts, listEnquiries } from "@/lib/enquiries";
 import { ENQUIRY_TYPES } from "@/lib/enquiry-schema";
 
+export const dynamic = "force-dynamic";
+
 export default async function Dashboard() {
   const counts = await enquiryCounts();
   const products = await adminListProducts();

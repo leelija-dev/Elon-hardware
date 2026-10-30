@@ -3,6 +3,8 @@ import { saveRangeAction } from "../../actions";
 import { ActionForm } from "../../_components/ActionForm";
 import { Field, input, textarea } from "../../_components/Field";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminRanges() {
   const ranges = await adminListRanges();
   return (

@@ -8,6 +8,8 @@ import { ActionForm, ConfirmButton } from "../../../_components/ActionForm";
 import { Field, input, textarea } from "../../../_components/Field";
 import { ImageList } from "./ImageList";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditProduct({ params, searchParams }: PageProps<"/admin/products/[slug]">) {
   const { slug } = await params;
   const sp = await searchParams;

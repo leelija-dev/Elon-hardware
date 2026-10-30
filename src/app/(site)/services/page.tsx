@@ -7,6 +7,8 @@ import { PageHero } from "@/components/PageHero";
 import { site } from "@/config/site";
 import { getProductOptions } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Services — Support, Warranty & Installation",
   description: "Service support, warranty, installation and care for ELON HARDWARE products, including one-day installation.",

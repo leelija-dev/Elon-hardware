@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { enquiryCounts } from "@/lib/enquiries";
 import { logoutAction } from "../actions";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 const nav = [

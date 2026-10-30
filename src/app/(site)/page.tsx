@@ -32,6 +32,8 @@ const tabCopy: Record<string, { title: string; text: string; images: string[] }>
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const ranges = await getRanges();
   const tabs = ranges

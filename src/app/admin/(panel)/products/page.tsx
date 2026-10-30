@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { adminListCategories, adminListProducts } from "@/lib/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProducts({ searchParams }: PageProps<"/admin/products">) {
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q : undefined;

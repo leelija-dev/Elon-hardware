@@ -6,6 +6,8 @@ import { PageHero } from "@/components/PageHero";
 import { site } from "@/config/site";
 import { getCategories, getProductOptions } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Contact Us",
   description: "Talk to ELON HARDWARE about home lockers, door hardware and fittings for your space. Book a demo or request a quote.",

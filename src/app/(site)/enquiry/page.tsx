@@ -8,6 +8,8 @@ import { site } from "@/config/site";
 import { getCategories, getCategory, getProduct, getProductOptions } from "@/lib/catalog";
 import { ENQUIRY_TYPES, type EnquiryType } from "@/lib/enquiry-schema";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Submit a Query",
   description: "Ask about a product, request a quote, book a free home demo or raise a service request with ELON HARDWARE.",

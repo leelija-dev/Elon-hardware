@@ -6,6 +6,8 @@ import { ConfirmButton } from "../../_components/ActionForm";
 
 const STATUS = ["new", "contacted", "closed"] as const;
 
+export const dynamic = "force-dynamic";
+
 export default async function EnquiriesPage({ searchParams }: PageProps<"/admin/enquiries">) {
   const sp = await searchParams;
   const status = typeof sp.status === "string" ? sp.status : undefined;

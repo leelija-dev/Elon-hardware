@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ProductListing } from "@/components/ProductListing";
 import { facets, getProductOptions, getRanges, parseQuery, searchProducts } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "All Products",
   description: "Explore home lockers, digital access solutions, architectural hardware, kitchen & wardrobe fittings, bath and glass hardware.",

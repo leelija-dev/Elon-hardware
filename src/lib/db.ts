@@ -28,15 +28,17 @@ function open(): Database {
   // Initialize schema (async but fire-and-forget)
   if (!globalThis.__elonDbInitialized) {
     (async () => {
-      for (const statement of SCHEMA) {
-        await db.exec(statement);
+      try {
+        for (const statement of SCHEMA) {
+          await db.exec(statement);
+        }
+        // Note: Auto-seeding disabled due to MariaDB/mysql2 parameter binding issues
+        // Use admin panel to add products manually, or run seed script manually
+        globalThis.__elonDbInitialized = true;
+      } catch (err) {
+        console.error("Database initialization error:", err);
       }
-      // Note: Auto-seeding disabled due to MariaDB/mysql2 parameter binding issues
-      // Use admin panel to add products manually, or run seed script manually
-      globalThis.__elonDbInitialized = true;
-    })().catch((err) => {
-      console.error("Database initialization error:", err);
-    });
+    })();
   }
 
   return db;

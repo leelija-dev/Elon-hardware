@@ -6,6 +6,8 @@ import { PageHero } from "@/components/PageHero";
 import { downloads } from "@/config/site";
 import { getCategories, getProductOptions } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Downloads — Catalogues & Brochures",
   description: "Download ELON HARDWARE catalogues and product brochures, or request one by email.",

@@ -11,6 +11,8 @@ import { site } from "@/config/site";
 import { FINISHES } from "@/lib/constants";
 import { getCategory, getProduct, getProductOptions, getRelatedProducts } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const p = await getProduct((await params).slug);
   if (!p) return {};

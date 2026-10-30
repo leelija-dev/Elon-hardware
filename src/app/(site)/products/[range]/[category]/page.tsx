@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ProductListing } from "@/components/ProductListing";
 import { facets, getCategory, getProductOptions, getRange, getRanges, parseQuery, searchProducts } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: PageProps<"/products/[range]/[category]">): Promise<Metadata> {
   const c = await getCategory((await params).category);
   return c ? { title: c.name, description: c.description } : {};
