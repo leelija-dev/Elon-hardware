@@ -1,13 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ACCESS_LABELS, CAPACITY_BANDS, FINISHES, SORT_OPTIONS } from "@/lib/constants";
-import type { AccessMode, CapacityBand, Category, FinishKey, GuideStep, ProductQuery, Range } from "@/lib/types";
+import type { AccessMode, CapacityBand, Category, FinishKey, GuideStep, ProductQuery, ProductView, Range } from "@/lib/types";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { EnquiryForm } from "./EnquiryForm";
 import { CtaBand } from "./Footer";
 import { Icon } from "./Icon";
 import { CheckFilter, ResetFilters, SearchField, SortSelect } from "./ListingControls";
 import { ProductCard } from "./ProductCard";
+
+type ProductListingResult = {
+  items: ProductView[];
+  total: number;
+  page: number;
+  pages: number;
+  perPage: number;
+};
+
+type FacetsResult = {
+  finish: Partial<Record<FinishKey, number>>;
+  access: Partial<Record<AccessMode, number>>;
+  capacity: Partial<Record<CapacityBand, number>>;
+  hasLockers: boolean;
+  total: number;
+};
 
 const DEFAULT_GUIDE: GuideStep[] = [
   { title: "Consider the setting", text: "Coordinate the piece with your space and interior style." },
@@ -20,10 +36,10 @@ type Props = {
   range?: Range;
   category?: Category;
   basePath: string;
-  ranges: Awaited<ReturnType<typeof getRanges>>;
-  result: Awaited<ReturnType<typeof searchProducts>>;
-  facetsData: Awaited<ReturnType<typeof facets>>;
-  productOptions: Awaited<ReturnType<typeof getProductOptions>>;
+  ranges: (Range & { count: number; categories: (Category & { count: number; })[]; })[];
+  result: ProductListingResult;
+  facetsData: FacetsResult;
+  productOptions: { slug: string; name: string; category: string; }[];
 };
 
 /** The product listing page from the design: hero card, search, filters sidebar, sort, grid, guide and CTA. */
@@ -47,11 +63,11 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
         { href: `/products/${range.slug}`, label: `All ${range.name.toLowerCase()}`, active: !category },
         ...ranges
           .find((r) => r.slug === range.slug)!
-          .categories.map((c) => ({ href: `/products/${range.slug}/${c.slug}`, label: c.name, active: c.slug === category?.slug, count: c.count })),
+          .categories.map((c: Category & { count: number; }) => ({ href: `/products/${range.slug}/${c.slug}`, label: c.name, active: c.slug === category?.slug, count: c.count })),
       ]
     : [
         { href: "/products", label: "All products", active: true },
-        ...ranges.map((r) => ({ href: `/products/${r.slug}`, label: r.name, active: false, count: r.count })),
+        ...ranges.map((r: Range & { count: number; }) => ({ href: `/products/${r.slug}`, label: r.name, active: false, count: r.count })),
       ];
 
   const finishOptions = (Object.keys(f.finish) as FinishKey[]).map((k) => ({
@@ -189,7 +205,7 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
 
             {result.items.length > 0 ? (
               <ul className="mt-8 grid gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
-                {result.items.map((p, i) => (
+                {result.items.map((p: ProductView, i: number) => (
                   <li key={p.slug}>
                     <ProductCard p={p} index={(result.page - 1) * result.perPage + i + 1} priority={i < 3} />
                   </li>
