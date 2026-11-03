@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, Star } from "./Icon";
+
+const AUTO_MS = 4500;
 
 export type TestimonialItem = { id: number; name: string; meta?: string; quote: string; rating: number; photo?: string };
 
@@ -19,12 +21,20 @@ function initials(name: string) {
 export function Testimonials({ items }: { items: TestimonialItem[] }) {
   const track = useRef<HTMLUListElement>(null);
   const [edges, setEdges] = useState({ start: true, end: true });
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [touchedAt, setTouchedAt] = useState(0);
+  const [hidden, setHidden] = useState(false);
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     const el = track.current;
     if (!el) return;
-    const update = () =>
-      setEdges({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+    const update = () => {
+      const start = el.scrollLeft <= 4;
+      const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      setEdges((e) => (e.start === start && e.end === end ? e : { start, end }));
+    };
     update();
     el.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
@@ -34,16 +44,56 @@ export function Testimonials({ items }: { items: TestimonialItem[] }) {
     };
   }, [items.length]);
 
-  if (!items.length) return null;
-  const scroll = (dir: number) => {
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMq = () => setReduced(mq.matches);
+    const onVis = () => setHidden(document.hidden);
+    onMq();
+    mq.addEventListener("change", onMq);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      mq.removeEventListener("change", onMq);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  /** Moves one card left/right; wraps around at either end. */
+  const scroll = useCallback((dir: number) => {
     const el = track.current;
     if (!el) return;
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+    const atStart = el.scrollLeft <= 4;
+    if (dir > 0 && atEnd) return el.scrollTo({ left: 0, behavior: "smooth" });
+    if (dir < 0 && atStart) return el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
     const card = el.querySelector("li");
     el.scrollBy({ left: dir * ((card?.clientWidth ?? 360) + 24), behavior: "smooth" });
-  };
+  }, []);
+
+  // Auto-slide: one card every few seconds; pauses on hover, keyboard focus, touch, hidden tab or reduced motion.
+  const scrollable = !(edges.start && edges.end);
+  const paused = hovered || focused || hidden || reduced || !scrollable;
+  useEffect(() => {
+    if (paused) return;
+    const wait = Math.max(0, touchedAt + 8000 - Date.now());
+    const t = window.setTimeout(() => scroll(1), Math.max(AUTO_MS, wait));
+    return () => window.clearTimeout(t);
+  }, [paused, edges, touchedAt, scroll]);
+
+  if (!items.length) return null;
 
   return (
-    <section aria-labelledby="testimonials-title" className="overflow-hidden bg-mist">
+    <section
+      aria-labelledby="testimonials-title"
+      aria-roledescription="carousel"
+      className="overflow-hidden bg-mist"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={(e) => setFocused((e.target as HTMLElement).matches(":focus-visible"))}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
+      }}
+      onTouchStart={() => setTouchedAt(Date.now())}
+    >
       <div className="container-site py-[72px] md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -53,12 +103,11 @@ export function Testimonials({ items }: { items: TestimonialItem[] }) {
               <span className="block text-gold-text">like yours.</span>
             </h2>
           </div>
-          {!(edges.start && edges.end) && (
+          {scrollable && (
             <div className="flex gap-2">
               <button
                 type="button"
                 aria-label="Previous reviews"
-                disabled={edges.start}
                 onClick={() => scroll(-1)}
                 className="flex size-12 items-center justify-center rounded-full border border-line-2 bg-white transition-colors hover:border-ink hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-35"
               >
@@ -67,7 +116,6 @@ export function Testimonials({ items }: { items: TestimonialItem[] }) {
               <button
                 type="button"
                 aria-label="Next reviews"
-                disabled={edges.end}
                 onClick={() => scroll(1)}
                 className="flex size-12 items-center justify-center rounded-full border border-line-2 bg-white transition-colors hover:border-ink hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-35"
               >
