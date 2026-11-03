@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { adminGetProduct, adminListCategories, adminListRanges } from "@/lib/admin-data";
-import { ACCESS_LABELS, FINISHES } from "@/lib/constants";
-import type { AccessMode, FinishKey } from "@/lib/types";
+import { FINISHES } from "@/lib/constants";
+import { productAccessModes, productColors, productExtraDetails } from "@/lib/product-fields";
 import { deleteProductAction, saveProductAction } from "../../../actions";
 import { ActionForm, ConfirmButton } from "../../../_components/ActionForm";
 import { Field, input, textarea } from "../../../_components/Field";
+import { RowsEditor, SizeChartEditor } from "../../../_components/Repeaters";
 import { ImageList } from "./ImageList";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +23,9 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
 
   const specsText = (p?.specs ?? []).map((s) => `${s.label}: ${s.value}`).join("\n");
   const featuresText = (p?.features ?? []).map((f) => (f.text ? `${f.title} — ${f.text}` : f.title)).join("\n");
+  const extraDetails = p ? productExtraDetails(p).map((d) => ({ label: d.label, value: d.value, unit: d.unit ?? "" })) : [];
+  const accessModes = p ? productAccessModes(p).map((name) => ({ name })) : [];
+  const colors = p ? productColors(p).map((c) => ({ name: c.name, hex: c.hex })) : [];
   const groupsText = (p?.groups ?? []).map((g) => `# ${g.title}\n${g.items.join("\n")}`).join("\n\n");
 
   return (
@@ -93,18 +97,6 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
 
         <section className="grid gap-5 rounded-[6px] bg-white p-6 md:grid-cols-2">
           <h2 className="text-[18px] font-bold md:col-span-2">Details</h2>
-          <fieldset className="md:col-span-2">
-            <legend className="mb-2 text-[14px] font-bold">Finishes</legend>
-            <div className="flex flex-wrap gap-4">
-              {(Object.keys(FINISHES) as FinishKey[]).map((f) => (
-                <label key={f} className="flex items-center gap-2 text-[14px]">
-                  <input type="checkbox" name="finishes" value={f} defaultChecked={p?.finishes?.includes(f)} className="accent-ink" />
-                  <span className="size-4 rounded-full border border-black/10" style={{ background: FINISHES[f].swatch }} />
-                  {FINISHES[f].label}
-                </label>
-              ))}
-            </div>
-          </fieldset>
           <Field label="Specifications" hint="One per line as “Label: Value”, e.g. “Weight: 25 kg”.">
             <textarea name="specs" rows={8} defaultValue={specsText} className={textarea} />
           </Field>
@@ -122,40 +114,95 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
           </Field>
         </section>
 
-        <section className="grid gap-5 rounded-[6px] bg-white p-6 md:grid-cols-4">
-          <h2 className="text-[18px] font-bold md:col-span-4">Locker details (home lockers only)</h2>
-          <p className="-mt-3 text-[13px] text-muted md:col-span-4">Fill these for lockers — they power the capacity and access filters and the locker finder.</p>
-          <Field label="Volume (litres)">
-            <input name="volume" type="number" step="0.1" min="0" defaultValue={p?.locker?.volume} className={input} />
+        <section className="rounded-[6px] bg-white p-6">
+          <h2 className="text-[18px] font-bold">Colours</h2>
+          <p className="mt-1 mb-4 text-[13px] text-muted">Add, rename or remove the colours / finishes this product is available in. They power the colour filter.</p>
+          <RowsEditor
+            name="colors"
+            addLabel="Add colour"
+            empty="No colours added yet."
+            columns={[
+              { key: "name", label: "Colour name", placeholder: "e.g. Matt black", width: "2" },
+              { key: "hex", label: "Swatch", type: "color", width: "2" },
+            ]}
+            initial={colors}
+            suggestions={Object.values(FINISHES).map((f) => ({ name: f.label, hex: f.swatch }))}
+          />
+        </section>
+
+        <section className="rounded-[6px] bg-white p-6">
+          <h2 className="text-[18px] font-bold">Extra product details</h2>
+          <p className="mt-1 mb-4 text-[13px] text-muted">
+            Any product type. Shown in the key specs and the specification table. For lockers, “Volume” (litres) and “Height / Width / Depth” also
+            power the capacity filter and the locker finder.
+          </p>
+          <RowsEditor
+            name="extraDetails"
+            addLabel="Add detail"
+            empty="No extra details yet."
+            columns={[
+              { key: "label", label: "Label", placeholder: "e.g. Volume", width: "2", list: "detail-labels" },
+              { key: "value", label: "Value", placeholder: "e.g. 10", width: "2" },
+              { key: "unit", label: "Unit", placeholder: "e.g. Litres", width: "1.3", list: "detail-units" },
+            ]}
+            initial={extraDetails}
+            suggestions={[
+              { label: "Volume", unit: "Litres" },
+              { label: "Height", unit: "mm" },
+              { label: "Width", unit: "mm" },
+              { label: "Depth", unit: "mm" },
+              { label: "Weight", unit: "kg" },
+              { label: "Thickness", unit: "mm" },
+            ]}
+          />
+          <datalist id="detail-labels">
+            {["Volume", "Height", "Width", "Depth", "Weight", "Length", "Thickness", "Material", "Warranty", "Battery"].map((v) => (
+              <option key={v} value={v} />
+            ))}
+          </datalist>
+          <datalist id="detail-units">
+            {["mm", "cm", "m", "Litres", "kg", "g", "inch", "years", "pcs", "V"].map((v) => (
+              <option key={v} value={v} />
+            ))}
+          </datalist>
+        </section>
+
+        <section className="rounded-[6px] bg-white p-6">
+          <h2 className="text-[18px] font-bold">Access modes</h2>
+          <p className="mt-1 mb-4 text-[13px] text-muted">
+            Any product type. Add your own names (e.g. Biometric, Digital PIN, Mechanical Key) — shown on the product page and matched to the
+            Access filter automatically.
+          </p>
+          <RowsEditor
+            name="accessModes"
+            flat="name"
+            addLabel="Add access mode"
+            empty="No access modes yet."
+            columns={[{ key: "name", label: "Access mode", placeholder: "e.g. Biometric" }]}
+            initial={accessModes}
+            suggestions={["Biometric", "Digital PIN", "Mechanical Key", "Mobile app", "RFID card", "Bluetooth"].map((name) => ({ name }))}
+          />
+          <div className="mt-5 flex flex-wrap gap-5 border-t border-line pt-4">
+            <label className="flex items-center gap-2 text-[14px]">
+              <input type="checkbox" name="fireResistant" defaultChecked={p?.locker?.fireResistant} className="accent-ink" />
+              Fire resistant (locker finder)
+            </label>
+            <label className="flex items-center gap-2 text-[14px]">
+              <input type="checkbox" name="laptopFit" defaultChecked={p?.locker?.laptopFit} className="accent-ink" />
+              Fits a laptop (locker finder)
+            </label>
+          </div>
+        </section>
+
+        <section className="rounded-[6px] bg-white p-6">
+          <h2 className="text-[18px] font-bold">Size chart</h2>
+          <p className="mt-1 mb-4 text-[13px] text-muted">
+            Optional. Shows a “Size chart” button on the product page that opens this guide in a pop-up. Build a table, upload an image, or both.
+          </p>
+          <SizeChartEditor initial={p?.sizeChart} />
+          <Field label="Upload size chart image" className="mt-4">
+            <input name="sizeChartUpload" type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="text-[14px] font-normal" />
           </Field>
-          <Field label="Height (mm)">
-            <input name="h" type="number" min="0" defaultValue={p?.locker?.dimensions.h} className={input} />
-          </Field>
-          <Field label="Width (mm)">
-            <input name="w" type="number" min="0" defaultValue={p?.locker?.dimensions.w} className={input} />
-          </Field>
-          <Field label="Depth (mm)">
-            <input name="d" type="number" min="0" defaultValue={p?.locker?.dimensions.d} className={input} />
-          </Field>
-          <fieldset className="md:col-span-4">
-            <legend className="mb-2 text-[14px] font-bold">Access modes</legend>
-            <div className="flex flex-wrap gap-5">
-              {(Object.keys(ACCESS_LABELS) as AccessMode[]).map((a) => (
-                <label key={a} className="flex items-center gap-2 text-[14px]">
-                  <input type="checkbox" name="access" value={a} defaultChecked={p?.locker?.access.includes(a)} className="accent-ink" />
-                  {ACCESS_LABELS[a]}
-                </label>
-              ))}
-              <label className="flex items-center gap-2 text-[14px]">
-                <input type="checkbox" name="fireResistant" defaultChecked={p?.locker?.fireResistant} className="accent-ink" />
-                Fire resistant
-              </label>
-              <label className="flex items-center gap-2 text-[14px]">
-                <input type="checkbox" name="laptopFit" defaultChecked={p?.locker?.laptopFit} className="accent-ink" />
-                Fits a laptop
-              </label>
-            </div>
-          </fieldset>
         </section>
 
         <section className="grid gap-5 rounded-[6px] bg-white p-6 md:grid-cols-4">
@@ -175,9 +222,13 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
           <Field label="Added on">
             <input name="addedOn" type="date" defaultValue={p?.addedOn} className={input} />
           </Field>
-          <label className="flex items-center gap-2 text-[14px] font-bold md:col-span-4">
+          <label className="flex items-center gap-2 text-[14px] font-bold md:col-span-2">
             <input type="checkbox" name="featured" defaultChecked={p?.featured} className="accent-ink" />
             Featured (shown first in listings)
+          </label>
+          <label className="flex items-center gap-2 text-[14px] font-bold md:col-span-2">
+            <input type="checkbox" name="bestSeller" defaultChecked={p?.bestSeller} className="accent-ink" />
+            Best seller (home page “Best sellers”)
           </label>
         </section>
       </ActionForm>

@@ -144,9 +144,6 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
             <Link href="/enquiry?type=demo" className={navLink(false)}>
               Book A Demo
             </Link>
-            <Link href="/services#odi" className={navLink(false)} title="One Day Installation">
-              ODI
-            </Link>
           </nav>
 
           <div className="flex items-center gap-2.5">
@@ -244,7 +241,6 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
               </details>
               <MobileLink href="/downloads">Download</MobileLink>
               <MobileLink href="/enquiry?type=demo">Book A Demo</MobileLink>
-              <MobileLink href="/services#odi">ODI — One Day Installation</MobileLink>
               <MobileLink href="/enquiry">Submit a Query</MobileLink>
               <Link href="/contact" className="btn-pill-dark mt-6">
                 Contact Us <Icon name="arrowUpRight" size={18} />

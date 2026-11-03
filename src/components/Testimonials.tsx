@@ -1,0 +1,124 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { Icon, Star } from "./Icon";
+
+export type TestimonialItem = { id: number; name: string; meta?: string; quote: string; rating: number; photo?: string };
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("");
+}
+
+/** Customer reviews — a horizontally scrolling row of cards with arrow controls. */
+export function Testimonials({ items }: { items: TestimonialItem[] }) {
+  const track = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: true });
+
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    const update = () =>
+      setEdges({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [items.length]);
+
+  if (!items.length) return null;
+  const scroll = (dir: number) => {
+    const el = track.current;
+    if (!el) return;
+    const card = el.querySelector("li");
+    el.scrollBy({ left: dir * ((card?.clientWidth ?? 360) + 24), behavior: "smooth" });
+  };
+
+  return (
+    <section aria-labelledby="testimonials-title" className="overflow-hidden bg-mist">
+      <div className="container-site py-[72px] md:py-24">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="eyebrow">What our customers say</div>
+            <h2 id="testimonials-title" className="display-lg mt-3">
+              Trusted in homes
+              <span className="block text-gold-text">like yours.</span>
+            </h2>
+          </div>
+          {!(edges.start && edges.end) && (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                aria-label="Previous reviews"
+                disabled={edges.start}
+                onClick={() => scroll(-1)}
+                className="flex size-12 items-center justify-center rounded-full border border-line-2 bg-white transition-colors hover:border-ink hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-35"
+              >
+                <Icon name="arrow" size={18} strokeWidth={1.6} className="rotate-180" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next reviews"
+                disabled={edges.end}
+                onClick={() => scroll(1)}
+                className="flex size-12 items-center justify-center rounded-full border border-line-2 bg-white transition-colors hover:border-ink hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-35"
+              >
+                <Icon name="arrow" size={18} strokeWidth={1.6} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <ul
+          ref={track}
+          className="-mx-5 mt-12 flex snap-x snap-mandatory scroll-px-5 gap-6 overflow-x-auto scroll-smooth px-5 pb-2 md:scroll-px-8 [scrollbar-width:none] md:-mx-8 md:px-8 [&::-webkit-scrollbar]:hidden"
+        >
+          {items.map((t) => (
+            <li
+              key={t.id}
+              className="flex w-[86%] shrink-0 snap-start flex-col rounded-[10px] bg-white p-7 sm:w-[calc(50%-12px)] md:p-8 lg:w-[calc((100%-48px)/3)]"
+            >
+              <div className="flex items-center justify-between">
+                <span className="flex gap-0.5 text-gold" aria-label={`${t.rating} out of 5 stars`} role="img">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <svg key={i} viewBox="0 0 20 20" className={`size-[18px] ${i < t.rating ? "fill-current" : "fill-line-2"}`} aria-hidden="true">
+                      <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8z" />
+                    </svg>
+                  ))}
+                </span>
+                <span aria-hidden="true" className="font-serif text-[64px] leading-[0.6] text-gold">
+                  &ldquo;
+                </span>
+              </div>
+              <blockquote className="mt-6 flex-1 text-[16px] leading-[1.75] text-text">{t.quote}</blockquote>
+              <div className="mt-8 flex items-center gap-4 border-t border-line pt-5">
+                {t.photo ? (
+                  <span className="relative size-12 shrink-0 overflow-hidden rounded-full">
+                    <Image src={t.photo} alt="" fill sizes="48px" className="object-cover" />
+                  </span>
+                ) : (
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-ink text-[14px] font-bold text-gold">
+                    {initials(t.name)}
+                  </span>
+                )}
+                <span>
+                  <span className="block text-[15px] font-bold">{t.name}</span>
+                  {t.meta && <span className="mt-0.5 block text-[13px] text-muted">{t.meta}</span>}
+                </span>
+                <Star size={22} className="ml-auto shrink-0 text-gold" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}

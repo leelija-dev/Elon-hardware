@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FINISHES } from "@/lib/constants";
+import { productColors } from "@/lib/product-fields";
 import type { ProductView } from "@/lib/types";
 import { Icon } from "./Icon";
 
@@ -73,6 +73,6 @@ export function ProductCard({ p, index, priority = false }: { p: ProductView; in
 }
 
 function finishText(p: ProductView) {
-  const f = (p.finishes ?? []).map((k) => FINISHES[k]?.label ?? k);
+  const f = productColors(p).map((c) => c.name);
   return f.length ? f.join(" / ") : p.subtitle;
 }

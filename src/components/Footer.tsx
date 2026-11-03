@@ -1,7 +1,46 @@
 import Link from "next/link";
 import Image from "next/image";
 import { site } from "@/config/site";
-import { Icon, Logo, Star } from "./Icon";
+import { getSettings, SOCIALS, type SocialKey } from "@/lib/content";
+import { Icon, Star } from "./Icon";
+
+const SOCIAL: Record<SocialKey, { label: string; icon: React.ReactNode }> = {
+  facebook: {
+    label: "Facebook",
+    icon: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />,
+  },
+  instagram: {
+    label: "Instagram",
+    icon: (
+      <>
+        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <path d="M17.5 6.5h.01" />
+      </>
+    ),
+  },
+  linkedin: {
+    label: "LinkedIn",
+    icon: (
+      <>
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
+        <rect width="4" height="12" x="2" y="9" />
+        <circle cx="4" cy="4" r="2" />
+      </>
+    ),
+  },
+  youtube: {
+    label: "YouTube",
+    icon: (
+      <>
+        <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+        <path d="m10 15 5-3-5-3z" />
+      </>
+    ),
+  },
+};
+
+const SOCIAL_ORDER: SocialKey[] = ["youtube", "linkedin", "facebook", "instagram"];
 
 const columns: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -33,8 +72,9 @@ const columns: { title: string; links: { href: string; label: string }[] }[] = [
   },
 ];
 
-export function Footer() {
-  const socials = Object.entries(site.social).filter(([, url]) => url);
+export async function Footer() {
+  const { social } = await getSettings();
+  const socials = SOCIAL_ORDER.filter((k) => SOCIALS.includes(k) && social[k]);
   return (
     <footer className="bg-ink text-white">
       <div className="container-site">
@@ -55,13 +95,33 @@ export function Footer() {
               </Link>
             <p className="mt-6 text-[17px]">{site.tagline}</p>
             {socials.length > 0 && (
-              <div className="mt-5 flex gap-4 text-[14px] text-fog">
-                {socials.map(([name, url]) => (
-                  <a key={name} href={url} target="_blank" rel="noopener noreferrer" className="capitalize hover:text-gold">
-                    {name}
-                  </a>
+              <ul className="mt-6 flex gap-3" aria-label="Follow us">
+                {socials.map((k) => (
+                  <li key={k}>
+                    <a
+                      href={social[k]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${site.name} on ${SOCIAL[k].label}`}
+                      title={SOCIAL[k].label}
+                      className="flex size-11 items-center justify-center rounded-full border border-ink-line text-white transition-colors hover:border-gold hover:bg-gold hover:text-ink"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="size-[18px]"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        {SOCIAL[k].icon}
+                      </svg>
+                    </a>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </div>
           {columns.map((c) => (

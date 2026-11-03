@@ -1,18 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CtaBand } from "@/components/Footer";
+import { HeroSlider } from "@/components/HeroSlider";
 import { Icon, Star } from "@/components/Icon";
+import { ProductImage } from "@/components/ProductCard";
 import { ShopByNeed } from "@/components/ShopByNeed";
+import { Testimonials } from "@/components/Testimonials";
 import { lockerGuide } from "@/data/catalogue";
-import { getRanges } from "@/lib/catalog";
+import { getBestSellers, getLatestProducts, getRanges } from "@/lib/catalog";
+import { getSettings, getSlides, getTestimonials } from "@/lib/content";
 
 const LOCKERS = "/products/digital-access-solutions/home-lockers";
-
-const lockerEdit = [
-  { title: "Compact living", text: "Small spaces. Meaningful essentials.", img: "/images/lockers/locker-compact.jpg", href: `${LOCKERS}?capacity=compact`, w: 150 },
-  { title: "Everyday essentials", text: "Your personal world, kept together.", img: "/images/lockers/locker-everyday.jpg", href: `${LOCKERS}?capacity=medium`, w: 200 },
-  { title: "Room for more", text: "Explore more generous storage formats.", img: "/images/lockers/locker-premium.jpg", href: `${LOCKERS}?capacity=large`, w: 200 },
-];
 
 const tabCopy: Record<string, { title: string; text: string; images: string[] }> = {
   "architectural-hardware": {
@@ -35,7 +33,9 @@ const tabCopy: Record<string, { title: string; text: string; images: string[] }>
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const ranges = await getRanges();
+  const [ranges, slides, settings, reviews] = await Promise.all([getRanges(), getSlides(), getSettings(), getTestimonials()]);
+  const { homeProducts } = settings;
+  const products = homeProducts.mode === "bestsellers" ? await getBestSellers(4) : await getLatestProducts(4);
   const tabs = ranges
     .filter((r) => tabCopy[r.slug])
     .map((r) => ({
@@ -49,74 +49,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ---------- Hero ---------- */}
-      <section className="grid bg-ink text-white lg:grid-cols-[675fr_765fr]">
-        <div className="flex flex-col justify-center px-5 pt-14 pb-10 md:px-8 lg:pt-[70px] lg:pr-4 lg:pb-12 lg:pl-[max(32px,calc((100vw-1312px)/2))]">
-          <div className="eyebrow-on-dark">Home lockers. Beautifully considered.</div>
-          <h1 className="display-xl mt-8 xl:whitespace-nowrap">
-            Your world.
-            <br />
-            Your treasures.
-            <span className="mt-3 block text-gold">Your safe place.</span>
-          </h1>
-          <p className="mt-8 max-w-[440px] text-[17px] leading-[1.75]">
-            For the pieces you cherish and the memories you keep. Find a home locker that fits your life, beautifully.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-8">
-            <Link href={LOCKERS} className="btn-pill-gold min-w-[250px]">
-              Explore home lockers <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
-            </Link>
-            <Link href="/locker-finder" className="text-[15px] font-bold hover:text-gold">
-              Help me choose →
-            </Link>
-          </div>
-          <div className="mt-11 flex max-w-[560px] items-end justify-between border-t border-ink-line pt-6">
-            <div className="flex gap-16 text-[11px] font-bold tracking-[0.02em] text-gold uppercase">
-              <span>Personal valuables</span>
-              <span>Considered spaces</span>
-            </div>
-            <Star size={40} className="-mb-1 text-gold" />
-          </div>
-        </div>
-        <div className="relative min-h-[460px] lg:min-h-[681px]">
-          <Image
-            src="/images/lifestyle/hero-woman.jpg"
-            alt="Woman holding a jewellery box in a sunlit home"
-            fill
-            priority
-            sizes="(min-width: 1024px) 53vw, 100vw"
-            className="object-cover object-[60%_30%]"
-          />
-          <svg
-            aria-hidden="true"
-            className="absolute top-11 left-[42px] hidden h-[590px] w-[220px] text-gold lg:block"
-            viewBox="0 0 220 590"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.2"
-          >
-            <path d="M3 590V200C3 90 90 5 215 3" />
-            <path d="M15 590V206C15 100 98 18 215 15" />
-          </svg>
-          <Link
-            href={LOCKERS}
-            className="absolute right-5 bottom-10 flex items-center gap-8 rounded-[6px] bg-white px-7 py-6 text-ink shadow-[0_20px_40px_-20px_rgba(0,0,0,0.5)] sm:right-[54px]"
-          >
-            <span className="relative block h-[66px] w-[70px]">
-              <Image src="/images/lockers/locker-everyday.jpg" alt="" fill sizes="70px" className="object-contain" />
-            </span>
-            <span>
-              <span className="block text-[9px] font-bold tracking-[0.02em] text-gold-text uppercase">The edit</span>
-              <span className="mt-1 block font-serif text-[22px] leading-[1.1]">
-                Home
-                <br />
-                lockers
-              </span>
-              <span className="mt-2 block text-[11px] font-bold">Explore ↗</span>
-            </span>
-          </Link>
-        </div>
-      </section>
+      {/* ---------- Hero slider (Admin → Home slider) ---------- */}
+      <HeroSlider slides={slides} />
 
       {/* ---------- Gold band ---------- */}
       <section className="bg-gold text-ink">
@@ -130,46 +64,51 @@ export default async function HomePage() {
         </ul>
       </section>
 
-      {/* ---------- Made for what matters ---------- */}
-      <section className="container-site pt-[84px] pb-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="eyebrow">01 / Explore the collection</div>
-            <h2 className="display-lg mt-3">Made for what matters.</h2>
-          </div>
-          <Link href={LOCKERS} className="text-[15px] font-bold hover:text-gold-text md:mr-24">
-            View all home lockers ↗
-          </Link>
-        </div>
-        <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-[34px]">
-          {lockerEdit.map((c, i) => (
-            <Link key={c.title} href={c.href} className="group block">
-              <div className="flex justify-between px-[22px] text-[11px] font-bold">
-                <span className="tracking-[0.02em] text-gold-text uppercase">The home locker edit</span>
-                <span className="font-normal text-muted">0{i + 1}</span>
-              </div>
-              <div className="relative mt-6 h-[230px]">
-                <Image
-                  src={c.img}
-                  alt={c.title}
-                  fill
-                  sizes="(min-width: 768px) 30vw, 90vw"
-                  className="object-contain transition-transform duration-300 group-hover:scale-[1.04]"
-                />
-              </div>
-              <div className="mt-8 flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-[24px] leading-tight font-normal">{c.title}</h3>
-                  <p className="mt-2 text-[14px] text-muted">{c.text}</p>
-                </div>
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors group-hover:bg-gold group-hover:text-ink">
-                  <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
-                </span>
-              </div>
+      {/* ---------- Latest products / best sellers (Admin → Settings) ---------- */}
+      {products.length > 0 && (
+        <section className="container-site pt-[84px] pb-20" aria-labelledby="home-products-title">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="eyebrow">{homeProducts.eyebrow}</div>
+              <h2 id="home-products-title" className="display-lg mt-3">
+                {homeProducts.title}
+              </h2>
+            </div>
+            <Link href="/products?sort=newest" className="text-[15px] font-bold hover:text-gold-text md:mr-24">
+              View all products ↗
             </Link>
-          ))}
-        </div>
-      </section>
+          </div>
+          <ul className="mt-14 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-[30px]">
+            {products.map((p, i) => (
+              <li key={p.slug}>
+                <Link href={p.href} className="group block">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="truncate tracking-[0.02em] text-gold-text uppercase">{p.badge ?? p.categoryName}</span>
+                    <span className="font-normal text-muted">{String(i + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="relative mt-5 aspect-square overflow-hidden rounded-[6px] bg-mist-2">
+                    <ProductImage
+                      src={p.images[0]}
+                      alt={p.name}
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 45vw, 90vw"
+                      className="p-8 mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="mt-6 flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="text-[20px] leading-snug font-normal group-hover:text-gold-text">{p.name}</h3>
+                      <p className="mt-1.5 line-clamp-2 text-[14px] text-muted">{p.subtitle || p.categoryName}</p>
+                    </div>
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors group-hover:bg-gold group-hover:text-ink">
+                      <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* ---------- About teaser ---------- */}
       <section className="overflow-hidden bg-mist">
@@ -325,6 +264,9 @@ export default async function HomePage() {
         href="/enquiry?type=quote"
         label="Enquire now"
       />
+
+      {/* ---------- Testimonials (Admin → Testimonials), directly above the footer ---------- */}
+      <Testimonials items={reviews} />
     </>
   );
 }

@@ -55,6 +55,28 @@ export interface Spec {
   value: string;
 }
 
+/** Admin "Extra product details" row, e.g. { label: "Volume", value: "10", unit: "Litres" }. */
+export interface ExtraDetail {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+/** Admin "Colours" row. */
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
+/** Size guide shown in a pop-up on the product page. */
+export interface SizeChart {
+  title?: string;
+  columns: string[];
+  rows: string[][];
+  note?: string;
+  image?: string;
+}
+
 export interface Product {
   slug: string;
   name: string;
@@ -73,8 +95,16 @@ export interface Product {
   /** Extra titled bullet groups on the detail page (e.g. "Access modes", "Alarms"). */
   groups?: { title: string; items: string[] }[];
   suitableFor?: string[];
+  /** Custom label / value / unit rows (all product types). */
+  extraDetails?: ExtraDetail[];
+  /** Free-text access modes, e.g. "Biometric", "Digital PIN". */
+  accessModes?: string[];
+  /** Available colours (name + swatch). */
+  colors?: ProductColor[];
+  sizeChart?: SizeChart;
   badge?: string;
   featured?: boolean;
+  bestSeller?: boolean;
   /** Higher = earlier for "Featured" sort. */
   rank: number;
   /** YYYY-MM-DD, used for "Newest" sort. */
@@ -104,7 +134,8 @@ export interface ProductQuery {
   q?: string;
   range?: string;
   category?: string;
-  finish?: FinishKey[];
+  /** Colour slugs (URL param "finish"). */
+  finish?: string[];
   access?: AccessMode[];
   capacity?: CapacityBand[];
   sort?: SortKey;

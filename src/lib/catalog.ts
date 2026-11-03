@@ -1,11 +1,11 @@
 import "server-only";
-import { ACCESS_LABELS, CAPACITY_BANDS, FINISHES, SORT_OPTIONS, capacityBand } from "./constants";
+import { ACCESS_LABELS, CAPACITY_BANDS, SORT_OPTIONS, capacityBand } from "./constants";
 import { db, json } from "./db";
+import { colorSlug, productAccessModes, productColors, productExtraDetails } from "./product-fields";
 import type {
   AccessMode,
   CapacityBand,
   Category,
-  FinishKey,
   Product,
   ProductQuery,
   ProductView,
@@ -71,10 +71,15 @@ export function rowToProduct(r: ProductRow): Product & { status: string } {
     suitableFor: json.parse(r.suitable_for, []),
     tags: json.parse(r.tags, []),
     locker: json.parse(r.locker, undefined),
+    extraDetails: json.parse(r.extra_details, undefined),
+    accessModes: json.parse(r.access_modes, undefined),
+    colors: json.parse(r.colors, undefined),
+    sizeChart: json.parse(r.size_chart, undefined),
     badge: (r.badge as string) || undefined,
-    featured: !!r.featured,
+    featured: !!Number(r.featured),
+    bestSeller: !!Number(r.best_seller),
     rank: Number(r.rank) || 0,
-    addedOn: r.added_on as string,
+    addedOn: String(r.added_on ?? "").slice(0, 10),
     status: (r.status as string) ?? "published",
   };
 }
@@ -155,6 +160,23 @@ export async function getFeaturedProducts(limit = 8, categorySlug?: string): Pro
     .slice(0, limit);
 }
 
+/** Newest published products (by "Added on", then last update). */
+export async function getLatestProducts(limit = 4): Promise<ProductView[]> {
+  const products = await getAllProducts();
+  return products.sort((a, b) => b.addedOn.localeCompare(a.addedOn) || b.rank - a.rank).slice(0, limit);
+}
+
+/** Products ticked as "Best seller" in the admin (falls back to featured, then newest). */
+export async function getBestSellers(limit = 4): Promise<ProductView[]> {
+  const products = await getAllProducts();
+  const best = products.filter((p) => p.bestSeller).sort((a, b) => b.rank - a.rank);
+  if (best.length >= limit) return best.slice(0, limit);
+  const rest = products
+    .filter((p) => !p.bestSeller)
+    .sort((a, b) => Number(!!b.featured) - Number(!!a.featured) || b.rank - a.rank || b.addedOn.localeCompare(a.addedOn));
+  return [...best, ...rest].slice(0, limit);
+}
+
 export async function getRelatedProducts(p: ProductView, limit = 4): Promise<ProductView[]> {
   const others = (await getAllProducts()).filter((x) => x.slug !== p.slug);
   const same = others.filter((x) => x.category === p.category).sort((a, b) => b.rank - a.rank);
@@ -194,7 +216,9 @@ function haystack(p: ProductView): string {
       p.rangeName,
       p.summary,
       (p.tags ?? []).join(" "),
-      (p.finishes ?? []).map((f) => FINISHES[f]?.label ?? f).join(" "),
+      productColors(p).map((c) => c.name).join(" "),
+      productAccessModes(p).join(" "),
+      productExtraDetails(p).map((d) => `${d.label} ${d.value} ${d.unit ?? ""}`).join(" "),
       (p.features ?? []).map((f) => f.title).join(" "),
       (p.groups ?? []).flatMap((g) => g.items).join(" "),
       p.specs.map((s) => s.value).join(" "),
@@ -235,7 +259,8 @@ export async function searchProducts(query: ProductQuery) {
 
   if (query.range) list = list.filter((x) => x.p.rangeSlug === query.range);
   if (query.category) list = list.filter((x) => x.p.category === query.category);
-  if (query.finish?.length) list = list.filter((x) => query.finish!.some((f) => x.p.finishes?.includes(f)));
+  if (query.finish?.length)
+    list = list.filter((x) => query.finish!.some((f) => productColors(x.p).some((c) => colorSlug(c.name) === f)));
   if (query.access?.length) list = list.filter((x) => query.access!.every((a) => x.p.locker?.access.includes(a)));
   if (query.capacity?.length) list = list.filter((x) => x.p.capacityBand && query.capacity!.includes(x.p.capacityBand));
 
@@ -267,11 +292,15 @@ export async function searchProducts(query: ProductQuery) {
 /** Which filter options exist (and how many products) for the current listing. */
 export async function facets(query: ProductQuery) {
   const base = (await searchProducts({ q: query.q, range: query.range, category: query.category, perPage: 10_000 })).items;
-  const finish: Partial<Record<FinishKey, number>> = {};
+  const finish: Record<string, { label: string; swatch: string; count: number }> = {};
   const access: Partial<Record<AccessMode, number>> = {};
   const capacity: Partial<Record<CapacityBand, number>> = {};
   for (const p of base) {
-    for (const f of p.finishes ?? []) finish[f] = (finish[f] ?? 0) + 1;
+    for (const c of productColors(p)) {
+      const k = colorSlug(c.name);
+      if (!k) continue;
+      finish[k] = finish[k] ? { ...finish[k], count: finish[k].count + 1 } : { label: c.name, swatch: c.hex, count: 1 };
+    }
     for (const a of p.locker?.access ?? []) access[a] = (access[a] ?? 0) + 1;
     if (p.capacityBand) capacity[p.capacityBand] = (capacity[p.capacityBand] ?? 0) + 1;
   }
@@ -296,7 +325,10 @@ export function parseQuery(sp: SP, fixed: { range?: string; category?: string } 
     q: one("q")?.trim().slice(0, 80) || undefined,
     range: fixed.range,
     category: fixed.category,
-    finish: list(sp.finish).filter((f): f is FinishKey => f in FINISHES),
+    finish: list(sp.finish)
+      .map(colorSlug)
+      .filter(Boolean)
+      .slice(0, 20),
     access: list(sp.access).filter((a): a is AccessMode => a in ACCESS_LABELS),
     capacity: list(sp.capacity).filter((c): c is CapacityBand => c in CAPACITY_BANDS),
     sort: SORT_OPTIONS.some((o) => o.value === sort) ? sort : "featured",

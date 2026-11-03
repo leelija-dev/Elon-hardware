@@ -15,6 +15,10 @@ const nav = [
   { href: "/admin/products", label: "Products" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/ranges", label: "Ranges" },
+  { href: "/admin/slides", label: "Home slider" },
+  { href: "/admin/catalogues", label: "Catalogues" },
+  { href: "/admin/testimonials", label: "Testimonials" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {

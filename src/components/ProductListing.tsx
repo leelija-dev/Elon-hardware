@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ACCESS_LABELS, CAPACITY_BANDS, FINISHES, SORT_OPTIONS } from "@/lib/constants";
-import type { AccessMode, CapacityBand, Category, FinishKey, GuideStep, ProductQuery, ProductView, Range } from "@/lib/types";
+import { ACCESS_LABELS, CAPACITY_BANDS, SORT_OPTIONS } from "@/lib/constants";
+import type { AccessMode, CapacityBand, Category, GuideStep, ProductQuery, ProductView, Range } from "@/lib/types";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { EnquiryForm } from "./EnquiryForm";
 import { CtaBand } from "./Footer";
@@ -18,7 +18,7 @@ type ProductListingResult = {
 };
 
 type FacetsResult = {
-  finish: Partial<Record<FinishKey, number>>;
+  finish: Record<string, { label: string; swatch: string; count: number }>;
   access: Partial<Record<AccessMode, number>>;
   capacity: Partial<Record<CapacityBand, number>>;
   hasLockers: boolean;
@@ -70,12 +70,9 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
         ...ranges.map((r: Range & { count: number; }) => ({ href: `/products/${r.slug}`, label: r.name, active: false, count: r.count })),
       ];
 
-  const finishOptions = (Object.keys(f.finish) as FinishKey[]).map((k) => ({
-    value: k,
-    label: FINISHES[k].label,
-    swatch: FINISHES[k].swatch,
-    count: f.finish[k],
-  }));
+  const finishOptions = Object.entries(f.finish)
+    .map(([k, v]) => ({ value: k, label: v.label, swatch: v.swatch, count: v.count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   const accessOptions = (Object.keys(ACCESS_LABELS) as AccessMode[])
     .filter((k) => f.access[k])
     .map((k) => ({ value: k, label: ACCESS_LABELS[k], count: f.access[k] }));
@@ -176,7 +173,7 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
             {accessOptions.length > 0 && <CheckFilter param="access" title="Access" options={accessOptions} />}
             {finishOptions.length > 0 && (
               <div>
-                <CheckFilter param="finish" title="Finish preference" options={finishOptions} />
+                <CheckFilter param="finish" title="Colour / finish" options={finishOptions} />
                 <p className="mt-6 text-[12px] text-muted">Finish availability varies by model.</p>
               </div>
             )}

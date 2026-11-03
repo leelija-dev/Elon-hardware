@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { CtaBand } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
@@ -11,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Services — Support, Warranty & Installation",
-  description: "Service support, warranty, installation and care for ELON HARDWARE products, including one-day installation.",
+  description: "Service support, warranty, installation and care for ELON HARDWARE products.",
 };
 
 const installSteps = [
@@ -48,7 +47,6 @@ export default async function ServicesPage() {
             ["#support", "Service support"],
             ["#warranty", "Warranty"],
             ["#installation", "How to install"],
-            ["#odi", "One Day Installation"],
             ["#care", "Care & maintenance"],
           ].map(([href, label]) => (
             <a key={href} href={href} className="rounded-full border border-white/30 px-4 py-2 hover:border-gold hover:text-gold">
@@ -108,34 +106,10 @@ export default async function ServicesPage() {
         </ol>
       </section>
 
-      <section id="odi" className="container-site scroll-mt-6 pb-16">
-        <div className="grid gap-8 rounded-[10px] bg-ink p-8 text-white md:p-12 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-          <div>
-            <div className="eyebrow-on-dark">04 / ODI — One Day Installation</div>
-            <h2 className="display-md mt-4">
-              One visit.
-              <span className="block text-gold">Fully set up.</span>
-            </h2>
-            <p className="mt-5 max-w-[520px] text-[16px] leading-[1.75] text-white/85">
-              With One Day Installation, your digital lock or home locker is installed, set up and explained to you in a single visit,
-              scheduled on a day that suits you — subject to stock and serviceable locations.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            <Link href="/enquiry?type=demo" className="btn-rect-gold">
-              Book installation <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
-            </Link>
-            <Link href="/contact" className="btn rounded-[3px] border border-white/30 text-white hover:border-gold">
-              Check my location <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <section id="care" className="scroll-mt-6 bg-mist">
         <div className="container-site grid gap-10 py-16 lg:grid-cols-[1fr_1.3fr]">
           <div>
-            <div className="eyebrow">05 / Care &amp; maintenance</div>
+            <div className="eyebrow">04 / Care &amp; maintenance</div>
             <h2 className="display-md mt-3">Small habits. Lasting performance.</h2>
           </div>
           <ul className="grid gap-4 sm:grid-cols-2">

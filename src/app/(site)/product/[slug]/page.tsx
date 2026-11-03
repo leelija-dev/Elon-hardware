@@ -7,9 +7,10 @@ import { CtaBand } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
+import { SizeChart } from "@/components/SizeChart";
 import { site } from "@/config/site";
-import { FINISHES } from "@/lib/constants";
 import { getCategory, getProduct, getProductOptions, getRelatedProducts } from "@/lib/catalog";
+import { formatDetail, productAccessModes, productColors, productExtraDetails } from "@/lib/product-fields";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +29,26 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
   if (!p) notFound();
   const category = await getCategory(p.category);
   const related = await getRelatedProducts(p, 4);
-  const keySpecs = p.locker
-    ? [
-        { label: "Capacity", value: `${p.locker.volume} L` },
-        { label: "H × W × D (mm)", value: `${p.locker.dimensions.h}×${p.locker.dimensions.w}×${p.locker.dimensions.d}` },
-        { label: "Access", value: `${p.locker.access.length}-way` },
-      ]
-    : p.specs.slice(0, 3);
+  const colors = productColors(p);
+  const accessModes = productAccessModes(p);
+  const details = productExtraDetails(p);
+  const hasCustomDetails = !!p.extraDetails?.length;
+  const keySpecs =
+    p.locker && !hasCustomDetails
+      ? [
+          { label: "Capacity", value: `${p.locker.volume} L` },
+          { label: "H × W × D (mm)", value: `${p.locker.dimensions.h}×${p.locker.dimensions.w}×${p.locker.dimensions.d}` },
+          { label: "Access", value: `${p.locker.access.length}-way` },
+        ]
+      : details.length
+        ? details.slice(0, 3).map((d) => ({ label: d.label, value: formatDetail(d) }))
+        : p.specs.slice(0, 3);
+  // Specification table: extra details first, then the other specs (without repeating a label).
+  const detailLabels = new Set(details.map((d) => d.label.trim().toLowerCase()));
+  const specRows = [
+    ...details.map((d) => ({ label: d.label, value: formatDetail(d) })),
+    ...p.specs.filter((s) => !detailLabels.has(s.label.trim().toLowerCase())),
+  ];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -73,7 +87,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             <p className="mt-6 text-[16px] leading-[1.75]">{p.summary}</p>
 
             {keySpecs.length > 0 && (
-              <dl className="mt-8 grid grid-cols-3 border border-line">
+              <dl className={`mt-8 grid border border-line ${keySpecs.length === 3 ? "grid-cols-3" : keySpecs.length === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
                 {keySpecs.map((s, i) => (
                   <div key={s.label} className={`p-4 ${i ? "border-l border-line" : ""}`}>
                     <dt className="text-[12px] text-muted">{s.label}</dt>
@@ -83,17 +97,37 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               </dl>
             )}
 
-            {p.finishes && p.finishes.length > 0 && (
+            {colors.length > 0 && (
               <div className="mt-7">
-                <div className="eyebrow mb-3">Finish</div>
-                <ul className="flex flex-wrap gap-4">
-                  {p.finishes.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-[15px]">
-                      <span className="size-5 rounded-full border border-black/10" style={{ background: FINISHES[f]?.swatch }} />
-                      {FINISHES[f]?.label ?? f}
+                <div className="eyebrow mb-3">{colors.length === 1 ? "Colour" : "Available colours"}</div>
+                <ul className="flex flex-wrap gap-x-5 gap-y-3">
+                  {colors.map((c) => (
+                    <li key={c.name} className="flex items-center gap-2 text-[15px]">
+                      <span className="size-5 rounded-full border border-black/10 shadow-[inset_0_0_0_2px_#fff]" style={{ background: c.hex }} />
+                      {c.name}
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {accessModes.length > 0 && (
+              <div className="mt-7">
+                <div className="eyebrow mb-3">Access modes</div>
+                <ul className="flex flex-wrap gap-2">
+                  {accessModes.map((a) => (
+                    <li key={a} className="flex items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 text-[14px]">
+                      <Icon name="check" size={14} strokeWidth={2.4} className="text-gold-text" />
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {p.sizeChart && (
+              <div className="mt-7">
+                <SizeChart chart={p.sizeChart} productName={p.name} />
               </div>
             )}
 
@@ -105,6 +139,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                 Book a demo <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
               </Link>
             </div>
+            {(site.whatsappHref || site.phoneHref) && (
             <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[14px] font-bold">
               {site.whatsappHref && (
                 <a href={site.whatsappHref} target="_blank" rel="noopener noreferrer" className="hover:text-gold-text">
@@ -116,10 +151,8 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                   Call {site.phone}
                 </a>
               )}
-              <Link href="/downloads" className="hover:text-gold-text">
-                Download brochure ↗
-              </Link>
             </div>
+            )}
 
             {p.suitableFor && p.suitableFor.length > 0 && (
               <p className="mt-8 border-t border-line pt-5 text-[14px] text-muted">
@@ -149,11 +182,12 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             )}
           </div>
           <div className="space-y-10">
+            {specRows.length > 0 && (
             <div>
               <h2 className="font-serif text-[28px]">Specifications</h2>
               <table className="mt-5 w-full border-collapse bg-white text-[15px]">
                 <tbody>
-                  {p.specs.map((s) => (
+                  {specRows.map((s) => (
                     <tr key={s.label} className="border-b border-line last:border-b-0">
                       <th scope="row" className="w-[44%] px-5 py-3.5 text-left font-normal text-muted">
                         {s.label}
@@ -164,6 +198,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                 </tbody>
               </table>
             </div>
+            )}
             {p.groups?.map((g) => (
               <div key={g.title}>
                 <h3 className="eyebrow">{g.title}</h3>
