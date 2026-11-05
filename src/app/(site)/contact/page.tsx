@@ -64,7 +64,7 @@ export default async function ContactPage() {
         <div className="rounded-[4px] border border-line p-6 md:p-10">
           <div className="eyebrow">Send us a message</div>
           <h2 className="display-sm mt-3 mb-8">How can we help?</h2>
-          <EnquiryForm products={await getProductOptions()} categories={await getCategories()} defaultType="general" variant="full" />
+          <EnquiryForm products={await getProductOptions()} categories={await getCategories()} defaultType="quote" showTypeTabs={false} variant="full" />
         </div>
         <aside className="space-y-4">
           {channels.map((c) => {

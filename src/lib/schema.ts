@@ -135,6 +135,18 @@ export const SCHEMA = [
   created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
+  /* About page — Meet our team */
+  `CREATE TABLE IF NOT EXISTS team_members (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  designation VARCHAR(255),
+  bio TEXT,
+  photo VARCHAR(500),
+  published TINYINT NOT NULL DEFAULT 1,
+  sort INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
   /* Simple key/value site settings (social links, home page options) */
   `CREATE TABLE IF NOT EXISTS settings (
   name VARCHAR(100) PRIMARY KEY,

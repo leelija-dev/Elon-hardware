@@ -141,8 +141,8 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
             <Link href="/downloads" className={navLink(active("/downloads"))}>
               Download
             </Link>
-            <Link href="/enquiry?type=demo" className={navLink(false)}>
-              Book A Demo
+            <Link href="/enquiry?type=quote" className={navLink(active("/enquiry"))}>
+              Get a quote
             </Link>
           </nav>
 
@@ -240,7 +240,7 @@ export function Header({ ranges }: { ranges: NavRange[] }) {
                 </div>
               </details>
               <MobileLink href="/downloads">Download</MobileLink>
-              <MobileLink href="/enquiry?type=demo">Book A Demo</MobileLink>
+              <MobileLink href="/enquiry?type=quote">Get a quote</MobileLink>
               <MobileLink href="/enquiry">Submit a Query</MobileLink>
               <Link href="/contact" className="btn-pill-dark mt-6">
                 Contact Us <Icon name="arrowUpRight" size={18} />

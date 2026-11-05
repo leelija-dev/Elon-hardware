@@ -5,6 +5,9 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CtaBand } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { aboutStats, aboutTimeline } from "@/config/site";
+import { getTeam } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -24,7 +27,17 @@ const world = [
   { title: "Interior fittings", text: "Details for the spaces you use daily.", img: "/images/ranges/kitchen-wardrobe.jpg", href: "/products/kitchen-wardrobe-fittings", round: true },
 ];
 
-export default function AboutPage() {
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("");
+}
+
+export default async function AboutPage() {
+  const team = await getTeam();
   return (
     <>
       {/* Hero */}
@@ -158,6 +171,55 @@ export default function AboutPage() {
           </ol>
         </div>
       </section>
+
+      {/* Meet our team (Admin → Team) */}
+      {team.length > 0 && (
+        <section id="team" aria-labelledby="team-title" className="container-site scroll-mt-4 pt-[84px] pb-6">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <div className="eyebrow">
+                The people <span className="font-normal">/</span> Meet our team
+              </div>
+              <h2 id="team-title" className="display-lg mt-5">
+                The people behind
+                <span className="block text-gold-text">every detail.</span>
+              </h2>
+            </div>
+            <p className="max-w-[420px] text-[16px] leading-[1.7] text-muted">
+              A dedicated team helping you choose, install and care for the hardware in your home.
+            </p>
+          </div>
+          <ul className="mt-12 grid gap-x-6 gap-y-[104px] pt-[76px] sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
+            {team.map((m) => (
+              <li key={m.id} className="group relative flex flex-col items-center rounded-[10px] bg-mist px-6 pt-[92px] pb-8 text-center transition-shadow hover:shadow-[0_24px_50px_-30px_rgba(0,0,0,0.35)]">
+                <span className="absolute -top-[76px] left-1/2 block size-[152px] -translate-x-1/2 overflow-hidden rounded-full border-[5px] border-white bg-ink shadow-[0_0_0_1px_var(--color-gold)]">
+                  {m.photo ? (
+                    <Image
+                      src={m.photo}
+                      alt={m.name}
+                      fill
+                      sizes="152px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                    />
+                  ) : (
+                    <span className="flex size-full items-center justify-center font-serif text-[40px] text-gold">{initials(m.name)}</span>
+                  )}
+                </span>
+                <h3 className="font-serif text-[26px] leading-tight font-normal">{m.name}</h3>
+                {m.designation && (
+                  <p className="mt-2 text-[12px] font-bold tracking-[0.04em] text-gold-text uppercase">{m.designation}</p>
+                )}
+                {m.bio && (
+                  <>
+                    <span aria-hidden="true" className="mt-5 block h-px w-10 bg-gold" />
+                    <p className="mt-5 text-[14px] leading-[1.7] text-muted">{m.bio}</p>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Point of view */}
       <section className="container-site grid items-center gap-12 py-[76px] lg:grid-cols-[578fr_650fr] lg:gap-[84px]">

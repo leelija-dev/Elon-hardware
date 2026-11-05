@@ -18,6 +18,7 @@ const nav = [
   { href: "/admin/slides", label: "Home slider" },
   { href: "/admin/catalogues", label: "Catalogues" },
   { href: "/admin/testimonials", label: "Testimonials" },
+  { href: "/admin/team", label: "Team" },
   { href: "/admin/settings", label: "Settings" },
 ];
 

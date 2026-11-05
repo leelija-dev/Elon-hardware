@@ -197,7 +197,7 @@ export default async function EditProduct({ params, searchParams }: PageProps<"/
         <section className="rounded-[6px] bg-white p-6">
           <h2 className="text-[18px] font-bold">Size chart</h2>
           <p className="mt-1 mb-4 text-[13px] text-muted">
-            Optional. Shows a “Size chart” button on the product page that opens this guide in a pop-up. Build a table, upload an image, or both.
+            Optional. Shown as a table on the product page, directly below the colours. Build a table, upload an image, or both.
           </p>
           <SizeChartEditor initial={p?.sizeChart} />
           <Field label="Upload size chart image" className="mt-4">

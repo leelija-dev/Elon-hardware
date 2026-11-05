@@ -24,6 +24,7 @@ import {
   upsertCategory,
   upsertRange,
   upsertSlide,
+  upsertTeamMember,
   upsertTestimonial,
   type AdminProduct,
   type ContentTable,
@@ -494,12 +495,51 @@ export async function saveTestimonialAction(_: FormState, fd: FormData): Promise
   return { ok: "Saved." };
 }
 
+/* ---------------- team (About page) ---------------- */
+
+export async function saveTeamMemberAction(_: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const id = intOr(str(fd, "id")) || undefined;
+  const name = str(fd, "name");
+  if (!name) return { error: "Name is required." };
+  const old = str(fd, "photo") || null;
+  let photo = old;
+  try {
+    const p = file(fd, "photoUpload");
+    if (p) photo = await saveUpload(p, "team");
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+  if (fd.get("removePhoto") === "on" && !file(fd, "photoUpload")) photo = null;
+  try {
+    await upsertTeamMember(
+      {
+        name: name.slice(0, 255),
+        designation: str(fd, "designation").slice(0, 255) || null,
+        bio: str(fd, "bio").slice(0, 1500) || null,
+        photo,
+        published: fd.get("published") === "on" ? 1 : 0,
+        sort: intOr(str(fd, "sort")),
+      },
+      id,
+    );
+  } catch (e) {
+    if (photo !== old) await removeUpload(photo);
+    return { error: `Could not save: ${dbErrorMessage(e, "team member")}` };
+  }
+  if (old && photo !== old) await removeUpload(old);
+  revalidatePath("/about");
+  revalidatePath("/admin/team");
+  if (!id) redirect("/admin/team?saved=1");
+  return { ok: "Saved." };
+}
+
 /* ---------------- shared delete for slides / catalogues / testimonials ---------------- */
 
 export async function deleteContentAction(fd: FormData) {
   await requireAdmin();
   const table = str(fd, "table") as ContentTable;
-  if (!["slides", "catalogues", "testimonials"].includes(table)) return;
+  if (!["slides", "catalogues", "testimonials", "team"].includes(table)) return;
   const id = intOr(str(fd, "id"));
   const row = await getContentRow(table, id);
   if (row) {

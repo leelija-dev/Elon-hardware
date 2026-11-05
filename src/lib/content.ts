@@ -59,6 +59,19 @@ export async function getTestimonials(): Promise<Review[]> {
   }));
 }
 
+export type TeamMember = { id: number; name: string; designation?: string; bio?: string; photo?: string };
+
+export async function getTeam(): Promise<TeamMember[]> {
+  const rows = (await db().prepare("SELECT * FROM team_members WHERE published = 1 ORDER BY sort, id").all()) as Row[];
+  return rows.map((r) => ({
+    id: Number(r.id),
+    name: s(r.name),
+    designation: s(r.designation) || undefined,
+    bio: s(r.bio) || undefined,
+    photo: s(r.photo) || undefined,
+  }));
+}
+
 export const SOCIALS = ["facebook", "instagram", "linkedin", "youtube"] as const;
 export type SocialKey = (typeof SOCIALS)[number];
 

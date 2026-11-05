@@ -244,7 +244,25 @@ export async function upsertTestimonial(t: Record<string, string | number | null
   }
 }
 
-const CONTENT_TABLES = { slides: "slides", catalogues: "catalogues", testimonials: "testimonials" } as const;
+export async function adminListTeam() {
+  return (await db().prepare("SELECT * FROM team_members ORDER BY sort, id").all()) as Row[];
+}
+
+export async function upsertTeamMember(t: Record<string, string | number | null>, id?: number) {
+  if (id) {
+    await db()
+      .prepare("UPDATE team_members SET name=@name,designation=@designation,bio=@bio,photo=@photo,published=@published,sort=@sort WHERE id=@id")
+      .run({ ...t, id });
+  } else {
+    await db()
+      .prepare(
+        "INSERT INTO team_members (name,designation,bio,photo,published,sort,created_at) VALUES (@name,@designation,@bio,@photo,@published,@sort,@now)",
+      )
+      .run({ ...t, now: new Date().toISOString() });
+  }
+}
+
+const CONTENT_TABLES = { slides: "slides", catalogues: "catalogues", testimonials: "testimonials", team: "team_members" } as const;
 export type ContentTable = keyof typeof CONTENT_TABLES;
 
 export async function getContentRow(table: ContentTable, id: number) {
@@ -271,7 +289,7 @@ const ALLOWED: Record<string, string> = {
   "image/avif": ".avif",
 };
 
-export type UploadFolder = "products" | "categories" | "slides" | "catalogues" | "testimonials";
+export type UploadFolder = "products" | "categories" | "slides" | "catalogues" | "testimonials" | "team";
 
 async function writeUpload(buf: Buffer, originalName: string, ext: string, folder: UploadFolder) {
   const base = slugify(path.parse(originalName).name) || "file";

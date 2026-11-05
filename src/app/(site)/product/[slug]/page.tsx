@@ -111,6 +111,12 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               </div>
             )}
 
+            {p.sizeChart && (
+              <div className="mt-7">
+                <SizeChart chart={p.sizeChart} productName={p.name} />
+              </div>
+            )}
+
             {accessModes.length > 0 && (
               <div className="mt-7">
                 <div className="eyebrow mb-3">Access modes</div>
@@ -122,12 +128,6 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
-
-            {p.sizeChart && (
-              <div className="mt-7">
-                <SizeChart chart={p.sizeChart} productName={p.name} />
               </div>
             )}
 

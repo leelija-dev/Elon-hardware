@@ -6,40 +6,36 @@ import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
 import { site } from "@/config/site";
 import { getCategories, getCategory, getProduct, getProductOptions } from "@/lib/catalog";
-import { ENQUIRY_TYPES, type EnquiryType } from "@/lib/enquiry-schema";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Submit a Query",
-  description: "Ask about a product, request a quote, book a free home demo or raise a service request with ELON HARDWARE.",
+  title: "Get a Quote",
+  description: "Request a quote for home lockers, digital locks and hardware from ELON HARDWARE.",
 };
 
 const steps = [
   { title: "Tell us what you need", text: "Choose a product or range and share a few details." },
   { title: "We call you back", text: `Our team responds within ${site.responseTime} with options and prices.` },
-  { title: "See it, then decide", text: "Book a demo or visit — with no obligation to buy." },
+  { title: "Compare, then decide", text: "Review the options and prices — with no obligation to buy." },
 ];
 
 export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry">) {
   const sp = await searchParams;
   const one = (k: string) => (Array.isArray(sp[k]) ? sp[k]![0] : (sp[k] as string | undefined));
-  const typeParam = one("type");
-  const type: EnquiryType = typeParam && typeParam in ENQUIRY_TYPES ? (typeParam as EnquiryType) : "quote";
+  // Only "Get a quote" is offered here (older ?type=demo / service / general links land on the same form).
   const product = one("product") ? await getProduct(one("product")!) : null;
   const interest = one("interest") ? await getCategory(one("interest")!) : null;
 
-  const title =
-    type === "demo" ? "Book a free" : type === "service" ? "Raise a" : product ? "Enquire about" : "Submit a";
-  const accent =
-    type === "demo" ? "home demo." : type === "service" ? "service request." : product ? `${product.name}.` : "product query.";
+  const title = product ? "Get a quote for" : "Get a";
+  const accent = product ? `${product.name}.` : "quote.";
 
   return (
     <>
       <PageHero
         crumbs={[
           { href: "/", label: "Home" },
-          { href: "/enquiry", label: "Submit a Query" },
+          { href: "/enquiry", label: "Get a quote" },
         ]}
         eyebrow="Product enquiries"
         title={title}
@@ -50,10 +46,11 @@ export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry"
       <section className="container-site grid gap-10 py-14 lg:grid-cols-[1.5fr_1fr]">
         <div className="rounded-[4px] border border-line p-6 md:p-10">
           <EnquiryForm
-            key={`${type}-${product?.slug ?? ""}-${interest?.slug ?? ""}`}
+            key={`${product?.slug ?? ""}-${interest?.slug ?? ""}`}
             products={await getProductOptions()}
             categories={await getCategories()}
-            defaultType={type}
+            defaultType="quote"
+            showTypeTabs={false}
             defaultProduct={product?.slug}
             defaultInterest={interest?.slug}
             variant="full"
