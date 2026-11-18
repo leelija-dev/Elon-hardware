@@ -22,7 +22,8 @@ const services = [
 
 export function Header({ ranges }: { ranges: NavRange[] }) {
   const pathname = usePathname();
-  const topLine = pathname === "/" ? "A safe place for the life you love." : "Considered details. Beautiful spaces.";
+  const topLine = "ELON HARDWARE | Multi-Category Hardware Solutions for Trade Professionals";
+
   const [menu, setMenu] = useState<null | "products" | "services">(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

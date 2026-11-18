@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const ENQUIRY_TYPES = {
-  demo: "Book a free home demo",
   quote: "Get a quote",
   service: "Service request",
   general: "General query",

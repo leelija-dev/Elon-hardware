@@ -16,7 +16,7 @@ const dejavu = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Home Lockers & Architectural Hardware`,
+    default: `${site.name} | Multi-Category Hardware Solutions for Trade Professionals`,
     template: `%s | ${site.name}`,
   },
   description: site.description,

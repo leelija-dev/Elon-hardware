@@ -42,36 +42,58 @@ const SOCIAL: Record<SocialKey, { label: string; icon: React.ReactNode }> = {
 
 const SOCIAL_ORDER: SocialKey[] = ["youtube", "linkedin", "facebook", "instagram"];
 
-const columns: { title: string; links: { href: string; label: string }[] }[] = [
+// const columns: { title: string; links: { href: string; label: string }[] }[] = [
+//   {
+//     title: "Explore",
+//     links: [
+//       { href: "/products/digital-access-solutions/home-lockers", label: "Home lockers" },
+//       { href: "/products/digital-access-solutions/digital-door-locks", label: "Door locks" },
+//       { href: "/products/architectural-hardware", label: "Hardware" },
+//       { href: "/products", label: "All products" },
+//     ],
+//   },
+//   {
+//     title: "ELON HARDWARE",
+//     links: [
+//       { href: "/about", label: "Our story" },
+//       { href: "/contact", label: "Contact" },
+//       { href: "/enquiry", label: "Product enquiries" },
+//       { href: "/downloads", label: "Downloads" },
+//     ],
+//   },
+//   {
+//     title: "Assistance",
+//     links: [
+//       { href: "/locker-finder", label: "Buying guide" },
+//       { href: "/services#support", label: "Support" },
+//       { href: "/services#care", label: "Care & maintenance" },
+//       { href: "/enquiry?type=demo", label: "Book a demo" },
+//     ],
+//   },
+// ];
+const columns = [
   {
-    title: "Explore",
+    title: "Product Categories",
     links: [
-      { href: "/products/digital-access-solutions/home-lockers", label: "Home lockers" },
-      { href: "/products/digital-access-solutions/digital-door-locks", label: "Door locks" },
-      { href: "/products/architectural-hardware", label: "Hardware" },
-      { href: "/products", label: "All products" },
+      { href: "/products/furniture-hardware", label: "Furniture Hardware" },
+      { href: "/products/kitchen-hardware", label: "Kitchen Hardware" },
+      { href: "/products/wardrobe-hardware", label: "Wardrobe Hardware" },
+      { href: "/products/architectural-hardware", label: "Architectural Hardware" },
+      { href: "/products/glass-hardware", label: "Glass Hardware" },
+      { href: "/products/digital-hardware", label: "Digital Hardware" },
     ],
   },
+  { title: "ELON HARDWARE", links: [ /* keep as it is */ ] },
   {
-    title: "ELON HARDWARE",
+    title: "Trade Support",
     links: [
-      { href: "/about", label: "Our story" },
-      { href: "/contact", label: "Contact" },
-      { href: "/enquiry", label: "Product enquiries" },
+      { href: "/enquiry?type=quote", label: "Request a Catalogue" },
+      { href: "/enquiry?type=quote", label: "Dealer Enquiry" },
+      { href: "/services#support", label: "Support" },
       { href: "/downloads", label: "Downloads" },
     ],
   },
-  {
-    title: "Assistance",
-    links: [
-      { href: "/locker-finder", label: "Buying guide" },
-      { href: "/services#support", label: "Support" },
-      { href: "/services#care", label: "Care & maintenance" },
-      { href: "/enquiry?type=demo", label: "Book a demo" },
-    ],
-  },
 ];
-
 export async function Footer() {
   const { social } = await getSettings();
   const socials = SOCIAL_ORDER.filter((k) => SOCIALS.includes(k) && social[k]);

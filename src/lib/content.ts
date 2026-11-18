@@ -94,8 +94,8 @@ export async function getSettings(): Promise<Settings> {
     social,
     homeProducts: {
       mode: best ? "bestsellers" : "latest",
-      eyebrow: map.home_products_eyebrow || (best ? "01 / Customer favourites" : "01 / New in the collection"),
-      title: map.home_products_title || (best ? "Best sellers." : "Latest products."),
+      eyebrow: map.home_products_eyebrow || (best ? "01 / Explore selected hardware solutions from the ELON HARDWARE range." : "01 / Explore selected hardware solutions from the ELON HARDWARE range."),
+      title: map.home_products_title || (best ? "Best sellers." : "Featured Products."),
     },
   };
 }

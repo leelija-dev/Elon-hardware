@@ -4,20 +4,20 @@
  */
 export const site = {
   name: "ELON HARDWARE",
-  tagline: "A place for everything that matters.",
+  tagline: "Precision. Quality. Trust.",
   description:
     "Home lockers, digital access solutions, architectural hardware, kitchen & wardrobe fittings, bath and glass hardware — thoughtfully chosen for the way you live.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
 
-  phone: "[Phone number]",
+  phone: "9051970488",
   phoneHref: "", // e.g. "tel:+919800000000"
-  whatsapp: "[WhatsApp number]",
+  whatsapp: "9051970488",
   whatsappHref: "", // e.g. "https://wa.me/919800000000"
-  email: "[sales@elonhardware.in]",
+  email: "⁠info@elonhardware.com",
   emailHref: "", // e.g. "mailto:sales@elonhardware.in"
-  hours: "Mon–Sat, [opening hours]",
-  address: "[Showroom / office address]",
-  cityLine: "[City, State, PIN]",
+  hours: "",
+  address: "Pinewood Industries Pvt. Ltd.",
+  cityLine: "Suvas Apartment, Jatindra Sarani, Champadali, Barasat, Kolkata , West Bengal - 700124",
   /** Google Maps → Share → Embed a map → copy the src URL */
   mapEmbedUrl: "",
   warranty: "[warranty period]",

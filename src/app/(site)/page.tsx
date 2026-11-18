@@ -55,7 +55,7 @@ export default async function HomePage() {
       {/* ---------- Gold band ---------- */}
       <section className="bg-gold text-ink">
         <ul className="container-site grid grid-cols-2 gap-y-4 py-6 text-[13px] font-bold tracking-[0.02em] uppercase md:grid-cols-4 md:text-[14px]">
-          {["Jewellery", "Documents", "Keepsakes", "Everyday valuables"].map((t) => (
+          {["FURNITURE", "KITCHEN", "WARDROBE" , "ARCHITECTURAL HARDWARE"].map((t) => (
             <li key={t} className="flex items-center gap-4 xl:-ml-2.5">
               <Star size={18} className="shrink-0" />
               {t}
@@ -135,16 +135,17 @@ export default async function HomePage() {
           <div className="lg:pl-6">
             <div className="eyebrow">About ELON HARDWARE</div>
             <h2 className="display-lg mt-4">
-              Thoughtful details.
+             Your Hardware
               <br />
-              Beautifully connected.
+              Sourcing Partner
             </h2>
             <p className="mt-10 max-w-[400px] text-[17px] leading-[1.65] text-muted">
-              From a safe place for your valuables to the finishing touches throughout your home, explore hardware for the way you
-              live. Discover home lockers, digital access solutions, door hardware and interior fittings.
+              ELON HARDWARE brings together essential hardware solutions for furniture manufacturing, retail hardware
+              businesses and interior projects. We aim to make product sourcing simpler with multiple categories under one brand
+              and responsive support for trade enquiries.
             </p>
             <Link href="/about" className="btn-pill-dark mt-14 min-w-[280px]">
-              Read more about us <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
+              ABOUT ELON HARDWARE <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
             </Link>
           </div>
         </div>
@@ -152,8 +153,8 @@ export default async function HomePage() {
 
       {/* ---------- Ranges ---------- */}
       <section className="container-site pt-[74px] pb-6">
-        <div className="eyebrow">Explore our product ranges</div>
-        <h2 className="display-lg mt-3">One home. Every detail.</h2>
+        <div className="eyebrow">EXPLORE OUR PRODUCT CATEGORIES</div>
+        <h5 className="display-lg mt-3">From furniture fittings to architectural hardware, find products for a wide range of applications.</h5>
         <div className="mt-8 border-t border-line">
           {ranges.map((r, i) => (
             <div key={r.slug} className="grid items-center gap-8 border-b border-line py-10 md:grid-cols-2 md:py-5 last:border-b-0">
@@ -164,7 +165,7 @@ export default async function HomePage() {
                 <h3 className="mt-4 font-serif text-[30px] leading-tight font-normal md:text-[36px]">{r.name}</h3>
                 <p className="mt-4 max-w-[380px] text-[16px] leading-[1.7] text-muted">{r.description}</p>
                 <Link href={`/products/${r.slug}`} className="btn-pill-dark mt-8 min-w-[213px]">
-                  Explore more <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
+                  Explore Product Categories <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
                 </Link>
               </div>
               <div className={`flex justify-center ${i % 2 ? "md:order-1 md:justify-start md:pl-24" : "md:justify-end md:pr-36"}`}>
@@ -259,10 +260,11 @@ export default async function HomePage() {
 
       <CtaBand
         eyebrow="Let’s talk about your space"
-        title="Find your safe place."
-        text="A more personal approach to choosing your home locker."
+        title="Looking for the right hardware?"
+        text="Share your product or project requirements. Our team will help you with available options, product details and trade
+enquiries."
         href="/enquiry?type=quote"
-        label="Enquire now"
+        label="SEND YOUR ENQUIRY"
       />
 
       {/* ---------- Testimonials (Admin → Testimonials), directly above the footer ---------- */}

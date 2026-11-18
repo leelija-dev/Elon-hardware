@@ -97,10 +97,10 @@ export function Testimonials({ items }: { items: TestimonialItem[] }) {
       <div className="container-site py-[72px] md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <div className="eyebrow">What our customers say</div>
+            <div className="eyebrow">What trade partners say</div>
             <h2 id="testimonials-title" className="display-lg mt-3">
-              Trusted in homes
-              <span className="block text-gold-text">like yours.</span>
+              Trusted by dealers
+              <span className="block text-gold-text">and manufacturers.</span>
             </h2>
           </div>
           {scrollable && (

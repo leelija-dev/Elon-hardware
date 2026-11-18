@@ -27,7 +27,7 @@ export function EnquiryForm({
   products,
   categories = [],
   defaultInterest,
-  defaultType = "demo",
+  defaultType = "quote",
   defaultProduct,
   variant = "full",
   showTypeTabs = variant === "full",
@@ -53,7 +53,7 @@ export function EnquiryForm({
       city: String(fd.get("city") ?? ""),
       pincode: String(fd.get("pincode") ?? ""),
       ...splitInterest(String(fd.get("interest") ?? ""), defaultProduct, defaultInterest),
-      slot: type === "demo" ? (fd.get("slot") as string) || undefined : undefined,
+      // slot: type === "demo" ? (fd.get("slot") as string) || undefined : undefined,
       message: String(fd.get("message") ?? ""),
       whatsapp: fd.get("whatsapp") === "on",
       company: String(fd.get("company") ?? ""),
@@ -92,7 +92,7 @@ export function EnquiryForm({
         <p className={`m-0 ${dark ? "text-fog" : "text-muted"}`}>
           Your reference number is <strong className={dark ? "text-white" : "text-text"}>{status.id}</strong>. Our
           team will call you within {site.responseTime}
-          {type === "demo" ? " to confirm your demo slot" : ""}.
+          
         </p>
         <button
           type="button"
@@ -126,7 +126,7 @@ export function EnquiryForm({
               onClick={() => setType(t)}
               className={`min-h-11 rounded-full px-5 text-sm font-bold transition-colors ${type === t ? "bg-ink text-white" : "text-text hover:bg-white"}`}
             >
-              {t === "demo" ? "Book a demo" : t === "quote" ? "Get a quote" : t === "service" ? "Service request" : "General query"}
+              {t === "quote" ? "Dealer / Trade Enquiry" : t === "service" ? "Product Support" : "General query"}
             </button>
           ))}
         </div>
@@ -211,7 +211,7 @@ export function EnquiryForm({
         )}
       </div>
 
-      {type === "demo" && variant !== "dark" && (
+      {/* {type === "demo" && variant !== "dark" && (
         <fieldset className="m-0 border-0 p-0">
           <legend className="mb-2.5 p-0 text-sm font-medium">Preferred demo slot</legend>
           <div className="flex flex-wrap gap-2.5">
@@ -226,7 +226,7 @@ export function EnquiryForm({
             ))}
           </div>
         </fieldset>
-      )}
+      )} */}
 
       {variant !== "dark" && (
         <label className={labelCls}>
@@ -237,10 +237,7 @@ export function EnquiryForm({
             maxLength={1500}
             placeholder={
               type === "service"
-                ? "Model, what's happening, when it started…"
-                : type === "demo"
-                  ? "Where you'd like to place the locker, what you'll store, etc."
-                  : "Product, quantity, location and timeline — anything that helps us advise you."
+                ? "Model, what's happening, when it started…" : "Product, quantity, location and timeline — anything that helps us advise you."
             }
             className={`${fieldCls} resize-y py-3`}
             {...aria("message")}
@@ -278,10 +275,8 @@ export function EnquiryForm({
         {status.state === "sending"
           ? "Sending…"
           : (submitLabel ??
-            (type === "demo"
-              ? "Book My Free Demo"
-              : type === "quote"
-                ? "Request a Quote"
+            (type === "quote"
+                ? "Get Product Details"
                 : type === "service"
                   ? "Submit Service Request"
                   : "Submit Query"))}

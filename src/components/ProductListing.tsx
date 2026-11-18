@@ -26,9 +26,9 @@ type FacetsResult = {
 };
 
 const DEFAULT_GUIDE: GuideStep[] = [
-  { title: "Consider the setting", text: "Coordinate the piece with your space and interior style." },
-  { title: "Explore the finish", text: "Compare finish options with your other hardware." },
-  { title: "Check the fit", text: "Confirm dimensions and compatibility before ordering." },
+  { title: "Confirm the application", text: "Check that the product suits your furniture, kitchen, wardrobe or door." },
+  { title: "Check finish and size", text: "Compare finishes, dimensions and load ratings before ordering." },
+  { title: "Ask for trade support", text: "Share your requirement for pricing, availability and product details." },
 ];
 
 type Props = {
@@ -47,14 +47,14 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
   const isLockers = f.hasLockers;
   const noun = category?.itemNoun ?? (isLockers && category ? "models" : "products");
 
-  const heroTitle = category?.heroTitle ?? (category ? category.name : (range?.heroTitle ?? "Considered details."));
-  const heroAccent = category?.heroAccent ?? (category ? "Thoughtfully chosen." : (range?.heroAccent ?? "Beautiful spaces."));
+  const heroTitle = category?.heroTitle ?? (category ? category.name : (range?.heroTitle ?? "Precision. Quality."));
+  const heroAccent = category?.heroAccent ?? (category ? "Thoughtfully chosen." : (range?.heroAccent ?? "Trust."));
   const heroText =
     category?.heroText ??
-    (category ? category.description : (range?.heroText ?? "Explore home lockers, digital access, door hardware and interior fittings."));
+    (category ? category.description : (range?.heroText ?? "Furniture, kitchen, wardrobe and architectural hardware — from one reliable supply partner."));
   const heroImage = category?.heroImage ?? category?.tile ?? range?.image ?? "/images/lockers/locker-premium.jpg";
   const heroEyebrow = category?.heroEyebrow ?? (category ? range?.name : range ? "The range" : "All products");
-  const heroCaption = category?.heroCaption ?? (range ? range.short : "Hardware for the way you live.");
+  const heroCaption = category?.heroCaption ?? (range ? range.short : "Precision. Quality. Trust.");
   const listTitle = query.q ? `Results for “${query.q}”` : (category?.name ?? range?.name ?? "All products");
 
   // Sidebar: sibling categories (inside a range) or all ranges.
@@ -178,10 +178,10 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
               </div>
             )}
             <div className="border-t border-line pt-7">
-              <div className="eyebrow">Planning a project?</div>
-              <p className="mt-4 text-[15px] leading-[1.7]">Let&rsquo;s find the right details for your space.</p>
+              <div className="eyebrow">Need product details?</div>
+              <p className="mt-4 text-[15px] leading-[1.7]">Share your requirement and our team will help with options, specifications and trade enquiries.</p>
               <Link href={`/enquiry?type=quote${category ? `&interest=${category.slug}` : ""}`} className="btn-rect-dark mt-5 w-full">
-                Get expert guidance <Icon name="arrowUpRight" size={18} strokeWidth={1.6} className="text-gold" />
+                Discuss Your Project <Icon name="arrowUpRight" size={18} strokeWidth={1.6} className="text-gold" />
               </Link>
             </div>
           </aside>
@@ -267,13 +267,13 @@ export function ProductListing({ query, range, category, basePath, ranges, resul
       </div>
 
       <CtaBand
-        eyebrow="For homes. For projects. For your vision."
-        title="Bring every detail together."
-        text="Share your requirements and explore the right hardware for your space."
-        href={`/enquiry?type=quote${category ? `&interest=${category.slug}` : ""}`}
-        label="Discuss your project"
-        variant="rect"
-      />
+      eyebrow="For dealers. For manufacturers. For designers."
+      title="Looking for the right hardware?"
+      text="Share your product or project requirements. Our team will help you with available options, product details and trade enquiries."
+      href={`/enquiry?type=quote${category ? `&interest=${category.slug}` : ""}`}
+      label="Send Your Enquiry"
+      variant="rect"
+    />
     </>
   );
 
