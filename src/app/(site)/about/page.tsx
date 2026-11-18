@@ -10,7 +10,7 @@ import { getTeam } from "@/lib/content";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "ABOUT ELON HARDWARE",
   description:
     "At ELON HARDWARE, we help you explore hardware that connects your personal style with everyday needs — from home lockers to the finishing touches throughout your space.",
 };
@@ -46,8 +46,8 @@ export default async function AboutPage() {
           <Breadcrumbs dark items={[{ href: "/", label: "HOME" }, { href: "/about", label: "ABOUT ELON" }]} />
           <div className="eyebrow-on-dark mt-16">The details that make a home</div>
           <h1 className="display-xl mt-8 xl:whitespace-nowrap">
-            Beautiful spaces.
-            <span className="block text-gold">Meaningful details.</span>
+           Hardware polution For
+            <span className="block text-gold">The people who build space.</span>
           </h1>
           <p className="mt-10 max-w-[440px] text-[17px] leading-[1.75]">
             A handle you reach for. A safe place for your treasures. The thoughtful touches that make a space your own.

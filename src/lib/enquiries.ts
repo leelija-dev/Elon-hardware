@@ -116,7 +116,7 @@ export async function submitEnquiry(data: EnquiryData, meta: { ip?: string; user
     product: product?.slug,
     productName: product?.name,
     interest: interestCat?.name ?? (product ? product.categoryName : data.interest),
-    slot: data.type === "demo" ? data.slot : undefined,
+    slot: undefined,
     message: data.message,
     whatsapp: !!data.whatsapp,
     page: data.page,
