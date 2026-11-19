@@ -1,4 +1,6 @@
+
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CtaBand } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
@@ -6,12 +8,14 @@ import { PageHero } from "@/components/PageHero";
 import { ProductCard } from "@/components/ProductCard";
 import { getAllProducts } from "@/lib/catalog";
 import type { ProductView } from "@/lib/types";
+const HIDDEN = true; 
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Locker Finder — Help Me Choose",
   description: "Answer three quick questions and find the home locker that fits what you store, where it will live and how you'll open it.",
+  robots: { index: false, follow: false },
 };
 
 const questions = [
@@ -99,6 +103,7 @@ function recommend(lockers: ProductView[], a: Answers) {
 }
 
 export default async function LockerFinderPage({ searchParams }: PageProps<"/locker-finder">) {
+  if (HIDDEN) notFound();
   const sp = await searchParams;
   const pick = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
   const answers: Answers = { what: pick("what"), where: pick("where"), access: pick("access") };

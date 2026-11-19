@@ -6,7 +6,7 @@ import { getAllProducts, getRanges } from "@/lib/catalog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const u = (p: string) => new URL(p, site.url).toString();
-  const pages = ["/", "/about", "/products", "/contact", "/enquiry", "/services", "/downloads", "/locker-finder"].map((p) => ({
+  const pages = ["/", "/about", "/products", "/contact", "/enquiry", "/services", "/downloads", ].map((p) => ({
     url: u(p),
     changeFrequency: "weekly" as const,
     priority: p === "/" ? 1 : 0.7,
