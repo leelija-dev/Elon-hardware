@@ -19,7 +19,7 @@ const tabCopy: Record<string, { title: string; text: string; images: string[] }>
     images: ["/images/hardware/banner-handle.jpg", "/images/hardware/banner-mortise.jpg"],
   },
   "inspiring-bath-concepts": {
-    title: "Everyday rituals, beautifully finished.",
+    title: "Bath fittings for every project.",
     text: "Explore bath fittings by product type.",
     images: ["/images/ranges/bath.jpg"],
   },
@@ -55,7 +55,7 @@ export default async function HomePage() {
       {/* ---------- Gold band ---------- */}
       <section className="bg-gold text-ink">
         <ul className="container-site grid grid-cols-2 gap-y-4 py-6 text-[13px] font-bold tracking-[0.02em] uppercase md:grid-cols-4 md:text-[14px]">
-          {["FURNITURE", "KITCHEN", "WARDROBE" , "ARCHITECTURAL HARDWARE"].map((t) => (
+          {["FURNITURE", "KITCHEN", "WARDROBE", "ARCHITECTURAL HARDWARE"].map((t) => (
             <li key={t} className="flex items-center gap-4 xl:-ml-2.5">
               <Star size={18} className="shrink-0" />
               {t}
@@ -154,7 +154,7 @@ export default async function HomePage() {
       {/* ---------- Ranges ---------- */}
       <section className="container-site pt-[74px] pb-6">
         <div className="eyebrow">EXPLORE OUR PRODUCT CATEGORIES</div>
-        <h5 className="display-lg mt-3">From furniture fittings to architectural hardware, find products for a wide range of applications.</h5>
+        <h2 className="display-lg mt-3">From furniture fittings to architectural hardware, find products for a wide range of applications.</h2>
         <div className="mt-8 border-t border-line">
           {ranges.map((r, i) => (
             <div key={r.slug} className="grid items-center gap-8 border-b border-line py-10 md:grid-cols-2 md:py-5 last:border-b-0">

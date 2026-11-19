@@ -12,19 +12,20 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "ABOUT ELON HARDWARE",
   description:
-    "At ELON HARDWARE, we help you explore hardware that connects your personal style with everyday needs — from home lockers to the finishing touches throughout your space.",
+    `ELON HARDWARE supplies a growing range of furniture, kitchen, wardrobe and architectural hardware for dealers,
+    furniture manufacturers and interior designers.`,
 };
 
 const values = [
-  { title: "Purpose", text: "Begin with how a space is used, and what matters to the people in it." },
-  { title: "Design", text: "Bring form, finish and proportion into the same conversation." },
-  { title: "Clarity", text: "Make the next step easier with clear product enquiries and guidance." },
+  { title: "Product Focus", text: "Understand the application and choose suitable hardware." },
+  { title: "Reliability", text: `Communicate clearly about product specifications and availability.`},
+  { title: "Partnerships", text: `Build long-term relationships with dealers, manufacturers and design professionals.` },
 ];
 
 const world = [
-  { title: "Home lockers", text: "A dedicated place for your valuables.", img: "/images/lockers/locker-premium.jpg", href: "/products/digital-access-solutions/home-lockers", round: false },
-  { title: "Architectural hardware", text: "The finishing touch for your doors.", img: "/images/ranges/architectural-hardware.jpg", href: "/products/architectural-hardware", round: true },
-  { title: "Interior fittings", text: "Details for the spaces you use daily.", img: "/images/ranges/kitchen-wardrobe.jpg", href: "/products/kitchen-wardrobe-fittings", round: true },
+  { title: "Architectural hardware", text: "Door and architectural hardware for projects.", img: "/images/ranges/architectural-hardware.jpg", href: "/products/architectural-hardware", round: true },
+  { title: "Kitchen & wardrobe fittings", text: "Fittings for manufacturers and fit-out work.", img: "/images/ranges/kitchen-wardrobe.jpg", href: "/products/kitchen-wardrobe-fittings", round: true },
+  { title: "Digital access solutions", text: "Home lockers and access products for the trade.", img: "/images/lockers/locker-premium.jpg", href: "/products/digital-access-solutions/home-lockers", round: false },
 ];
 
 function initials(name: string) {
@@ -41,38 +42,76 @@ export default async function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="grid bg-ink text-white lg:grid-cols-[770fr_670fr]">
-        <div className="flex flex-col px-5 pb-12 md:px-8 lg:pr-8 lg:pl-[max(32px,calc((100vw-1312px)/2))]">
-          <Breadcrumbs dark items={[{ href: "/", label: "HOME" }, { href: "/about", label: "ABOUT ELON" }]} />
-          <div className="eyebrow-on-dark mt-16">The details that make a home</div>
-          <h1 className="display-xl mt-8 xl:whitespace-nowrap">
-           Hardware polution For
-            <span className="block text-gold">The people who build space.</span>
-          </h1>
-          <p className="mt-10 max-w-[440px] text-[17px] leading-[1.75]">
-            A handle you reach for. A safe place for your treasures. The thoughtful touches that make a space your own.
-          </p>
-          <a href="#story" className="btn-rect-gold mt-12 w-fit min-w-[240px]">
-            Discover our world <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
-          </a>
-          <div className="mt-12 flex max-w-[608px] items-center justify-between border-t border-ink-line pt-6 text-[11px] tracking-[0.02em] uppercase">
-            Hardware for the way you live.
-            <Icon name="arrowDown" size={22} strokeWidth={1.4} className="text-gold" />
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div className="grid lg:grid-cols-[1fr_1fr]">
+          {/* Text */}
+          <div className="relative z-10 flex flex-col px-5 pb-14 md:px-8 lg:pr-12 lg:pl-[max(32px,calc((100vw-1312px)/2))]">
+            <Breadcrumbs dark items={[{ href: "/", label: "HOME" }, { href: "/about", label: "ABOUT ELON" }]} />
+
+            <div className="eyebrow-on-dark mt-12 lg:mt-16">ABOUT ELON HARDWARE</div>
+
+            <h1 className="display-xl mt-6">
+             Hardware solutions for the people 
+              <span className="block text-gold">who build spaces.</span>
+            </h1>
+
+            <span aria-hidden="true" className="mt-8 block h-[3px] w-16 bg-gold" />
+
+            <p className="mt-8 max-w-[500px] text-[17px] leading-[1.75] text-white/85">
+              ELON HARDWARE supplies a growing range of furniture, kitchen, wardrobe and architectural hardware for dealers,
+              furniture manufacturers and interior designers.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link href="/contact" className="btn-rect-gold min-w-[220px]">
+                Request a quote <Icon name="arrowUpRight" size={18} strokeWidth={1.6} />
+              </Link>
+              <Link
+                href="/products"
+                className="inline-flex min-w-[220px] items-center justify-center gap-2 border border-white/40 px-6 py-4 text-[14px] font-bold tracking-[0.02em] uppercase transition-colors hover:border-gold hover:text-gold"
+              >
+                Discover our world
+              </Link>
+            </div>
+
+            {/* Trust strip */}
+            <ul className="mt-12 grid max-w-[560px] grid-cols-3 gap-4 border-t border-ink-line pt-6">
+              {[
+                ["Dealers", "Reliable supply"],
+                ["Manufacturers", "Consistent quality"],
+                ["Designers", "Refined finishes"],
+              ].map(([t, s]) => (
+                <li key={t}>
+                  <div className="text-[13px] font-bold tracking-[0.04em] text-gold uppercase">{t}</div>
+                  <div className="mt-1 text-[12px] text-white/70">{s}</div>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-        <div className="relative min-h-[440px] lg:min-h-[630px]">
-          <Image
-            src="/images/lifestyle/hero-woman.jpg"
-            alt="Woman holding a jewellery box at home"
-            fill
-            priority
-            sizes="(min-width: 1024px) 47vw, 100vw"
-            className="object-cover"
-          />
+
+          {/* Image */}
+          <div className="relative min-h-[360px] sm:min-h-[460px] lg:min-h-[680px]">
+            <Image
+              src="/images/ranges/architectural-hardware.jpg"
+              alt="ELON HARDWARE architectural and door hardware range"
+              fill
+              priority
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+            {/* Blend image into the dark text side */}
+            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-ink lg:via-ink/10 lg:to-transparent" />
+
+            {/* Floating badge */}
+            <div className="absolute bottom-6 left-5 bg-ink/90 px-6 py-5 backdrop-blur-sm sm:bottom-10 sm:left-8 lg:left-auto lg:right-8">
+              <div className="text-[11px] font-bold tracking-[0.08em] text-gold uppercase">Multi-category supplier</div>
+              <div className="mt-1 font-serif text-[22px]">Hardware that performs.</div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="bg-gold text-ink">
+      {/* <section className="bg-gold text-ink">
         <ul className="container-site grid grid-cols-2 gap-y-3 py-7 text-[13px] font-bold tracking-[0.02em] uppercase md:grid-cols-4">
           {[
             ["Home lockers", "/products/digital-access-solutions/home-lockers"],
@@ -87,25 +126,25 @@ export default async function AboutPage() {
             </li>
           ))}
         </ul>
-      </section>
+      </section> */}
 
       {/* Intro */}
       <section id="story" className="container-site grid scroll-mt-4 gap-10 border-b border-line pt-[92px] pb-[74px] lg:grid-cols-2">
         <div>
-          <div className="eyebrow">01 / About ELON HARDWARE</div>
+          {/* <div className="eyebrow">01 / About ELON HARDWARE</div> */}
           <h2 className="display-lg mt-5">
-            Small details.
-            <br />A lasting impression.
+            One partner. 
+            <br /> Multiple hardware categories.
           </h2>
         </div>
         <div className="max-w-[460px] space-y-6 pt-2 text-[17px] leading-[1.72] text-muted">
           <p>
-            A home comes together through the choices you make. Some make a statement. Others work quietly in the background. Every
-            detail has a place.
+            Our focus is to make hardware sourcing more convenient by bringing multiple product categories together under
+            one brand. 
           </p>
           <p>
-            At ELON HARDWARE, our focus is simple: help you explore hardware that connects your personal style with everyday needs, from
-            home lockers to the finishing touches throughout your space.
+            From essential furniture fittings to kitchen, wardrobe and architectural hardware, we help trade
+            customers explore suitable products for their business and projects.
           </p>
         </div>
       </section>
@@ -118,9 +157,10 @@ export default async function AboutPage() {
               <div className="eyebrow">
                 Our journey <span className="font-normal">/</span> The ELON story
               </div>
-              <h2 className="display-lg mt-5">Every detail has a beginning.</h2>
+              <h2 className="display-lg mt-5">Our Journey</h2>
               <p className="mt-6 max-w-[460px] text-[17px] leading-[1.7] text-muted">
-                A place to celebrate the people, partnerships and milestones that shape ELON HARDWARE.
+               ELON HARDWARE is building its presence in the hardware industry with a focus on product range, trade
+                relationships and service. We continue to develop our categories in response to the needs of our customers.
               </p>
             </div>
             <div className="hidden md:mr-[180px] md:block">
@@ -181,12 +221,12 @@ export default async function AboutPage() {
                 The people <span className="font-normal">/</span> Meet our team
               </div>
               <h2 id="team-title" className="display-lg mt-5">
-                The people behind
-                <span className="block text-gold-text">every detail.</span>
+               The team behind 
+                <span className="block text-gold-text">Elon Hardware.</span>
               </h2>
             </div>
             <p className="max-w-[420px] text-[16px] leading-[1.7] text-muted">
-              A dedicated team helping you choose, install and care for the hardware in your home.
+             Our team works to support product enquiries, trade relationships and customer requirements.
             </p>
           </div>
           <ul className="mt-12 grid gap-x-6 gap-y-[104px] pt-[76px] sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
@@ -225,29 +265,30 @@ export default async function AboutPage() {
       <section className="container-site grid items-center gap-12 py-[76px] lg:grid-cols-[578fr_650fr] lg:gap-[84px]">
         <div className="relative">
           <div className="relative aspect-[578/519]">
-            <Image src="/images/lifestyle/jewellery.jpg" alt="Woman placing a bracelet in her jewellery box" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover object-top" />
+            <Image src="/images/ranges/kitchen-wardrobe.jpg" alt="ELON HARDWARE kitchen and wardrobe fittings" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover object-top" />
           </div>
           <div className="absolute right-[-14px] bottom-9 bg-ink px-6 py-8 text-[12px] leading-[2.5] font-bold tracking-[0.02em] text-gold uppercase">
-            Personal.
+            Practical.
             <br />
-            By design.
+            Reliable.
           </div>
         </div>
         <div>
           <div className="eyebrow">02 / Our point of view</div>
           <h2 className="display-lg mt-6">
-            Made part of
+           Built for
             <br />
-            your everyday.
+            the trade.
           </h2>
           <h3 className="mt-10 text-[19px] font-bold">Our vision</h3>
           <p className="mt-4 max-w-[380px] text-[17px] leading-[1.7] text-muted">
-            To make thoughtfully chosen hardware a natural part of beautiful, practical spaces.
+            To become a trusted multi-category hardware supply partner for the furniture and interior industry.
           </p>
           <hr className="my-6 border-line" />
           <h3 className="text-[19px] font-bold">Our mission</h3>
           <p className="mt-4 max-w-[420px] text-[17px] leading-[1.7] text-muted">
-            To help homeowners and design professionals explore the right details, with a clear path from inspiration to product selection.
+           To make quality hardware easier to source for dealers, furniture manufacturers and interior designers through a
+            broad product range and dependable trade support.
           </p>
         </div>
       </section>
@@ -273,8 +314,8 @@ export default async function AboutPage() {
       <section className="container-site pt-24 pb-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="eyebrow">04 / The ELON world</div>
-            <h2 className="display-lg mt-4">One home. Every detail.</h2>
+            <div className="eyebrow">04 / Our range</div>
+            <h2 className="display-lg mt-4">One partner. Every category.</h2>
           </div>
           <Link href="/products" className="text-[14px] hover:text-gold-text md:mr-24">
             Explore all products ↗
@@ -302,8 +343,10 @@ export default async function AboutPage() {
         </ul>
         <div className="mt-16 flex flex-col gap-6 rounded-[4px] bg-mist-2 px-7 py-8 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
-            <h2 className="font-serif text-[28px] font-normal">Your space. Your perspective.</h2>
-            <p className="mt-2 text-[15px] text-muted">For homeowners, architects and interior designers planning their next project.</p>
+            <h2 className="font-serif text-[28px] font-normal">Practical products. Responsive support.</h2>
+            <p className="mt-2 text-[15px] text-muted">We believe good hardware should combine function, suitable design and dependable performance. We work to
+support our trade customers with clear product information, responsive communication and solutions suited to their
+requirements.</p>
           </div>
           <Link href="/contact" className="btn-rect-dark min-w-[265px]">
             Talk to ELON <Icon name="arrowUpRight" size={18} strokeWidth={1.6} className="text-gold" />
@@ -312,8 +355,8 @@ export default async function AboutPage() {
       </section>
 
       <CtaBand
-        eyebrow="Let’s create a more considered space"
-        title="It starts with a conversation."
+        eyebrow="Let’s build a stronger hardware partnership."
+        title="Contact our team to discuss your requirements."
         href="/contact"
         label="Get in touch"
         variant="rect"
