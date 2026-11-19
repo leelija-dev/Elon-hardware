@@ -15,33 +15,33 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
-    q: "Can I see a home locker before I buy?",
-    a: "Yes. Book a home demo and our team will bring the locker to you, explain every feature and recommend the right size for your space.",
+    q: "Who can enquire with ELON HARDWARE?",
+    a: "Hardware dealers, furniture manufacturers, interior designers, architects and other trade buyers can contact us for product and supply enquiries.",
   },
   {
-    q: "Do you help architects and interior designers?",
-    a: "Absolutely. Share your project details through the enquiry form and we'll help you shortlist hardware, finishes and quantities.",
+    q: "Which product categories do you supply?",
+    a: "Our categories include furniture, kitchen, wardrobe, architectural, glass and selected digital hardware. Product availability may vary.",
   },
   {
-    q: "What happens if a digital locker's batteries run out?",
-    a: "Our digital lockers include emergency access — a USB / Type‑C jump‑start port for a power bank, plus mechanical override keys.",
+    q: "Can I enquire about bulk or regular supply?",
+    a: "Yes. Share your business details, product requirements and estimated quantities so our team can discuss the available supply options.",
   },
   {
-    q: "Do you install the products?",
-    a: "Yes — professional installation is available. Lockers can be fixed securely to the floor or wall so they cannot be carried away.",
+    q: "Can interior designers enquire for project requirements?",
+    a: "Yes. Share the product types, finishes, quantities and project location for assistance.",
   },
   {
-    q: "How quickly will you respond to my enquiry?",
-    a: `Our team responds within ${site.responseTime}. Every enquiry gets a reference number you can quote when you speak to us.`,
+    q: "How can I receive product details and pricing?",
+    a: "Submit the enquiry form or contact our team by phone or WhatsApp.",
   },
 ];
 
 export default async function ContactPage() {
   const channels: { icon: IconName; label: string; value: string; note: string; href?: string }[] = [
-    { icon: "phone", label: "Call us", value: site.phone, note: site.hours, href: site.phoneHref },
-    { icon: "chat", label: "WhatsApp", value: site.whatsapp, note: "Quick answers & photos", href: site.whatsappHref },
-    { icon: "mail", label: "Email", value: site.email, note: "Quotes & dealer enquiries", href: site.emailHref },
-    { icon: "pin", label: "Visit", value: site.address, note: site.cityLine },
+    { icon: "phone", label: "Call us", value: site.phone, note: "Call for Product & Trade Enquiries", href: site.phoneHref },
+    { icon: "chat", label: "WhatsApp", value: site.whatsapp, note: "WhatsApp for Product Information", href: site.whatsappHref },
+    { icon: "mail", label: "Email", value: site.email, note: "Email for Dealer & Business Enquiries", href: site.emailHref },
+    { icon: "pin", label: "Showroom & Office", value: site.address, note: site.cityLine },
   ];
 
   return (
@@ -51,10 +51,11 @@ export default async function ContactPage() {
           { href: "/", label: "Home" },
           { href: "/contact", label: "Contact Us" },
         ]}
-        eyebrow="Let’s talk about your space"
-        title="It starts with"
-        accent="a conversation."
-        text="Planning a home, an office or a project? Tell us what you need — a home demo, a quote or advice on the right hardware — and we'll take it from there."
+        eyebrow="Let’s discuss your hardware requirements"
+        title="Contact "
+        accent="Elon Hardware"
+        text="For product enquiries, dealer partnerships, furniture manufacturing requirements and interior projects, get in touch
+with the ELON HARDWARE team."
         image="/images/lifestyle/hero-woman.jpg"
         imageAlt="Woman holding a jewellery box at home"
         caption="Personal. By design."
@@ -62,7 +63,7 @@ export default async function ContactPage() {
 
       <section className="container-site grid gap-10 py-16 lg:grid-cols-[1.35fr_1fr]">
         <div className="rounded-[4px] border border-line p-6 md:p-10">
-          <div className="eyebrow">Send us a message</div>
+          <div className="eyebrow">Send us your enquiry</div>
           <h2 className="display-sm mt-3 mb-8">How can we help?</h2>
           <EnquiryForm products={await getProductOptions()} categories={await getCategories()} defaultType="quote" showTypeTabs={false} variant="full" />
         </div>
@@ -122,7 +123,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <CtaBand eyebrow="Prefer to see it first?" title="Book a free home demo." href="/enquiry?type=demo" label="Book a demo" />
+      {/* <CtaBand eyebrow="Prefer to see it first?" title="Book a free home demo." href="/enquiry?type=demo" label="Book a demo" /> */}
     </>
   );
 }
