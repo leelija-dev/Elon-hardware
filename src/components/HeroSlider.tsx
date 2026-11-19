@@ -201,21 +201,28 @@ function Slide({
   clone?: boolean;
 }) {
   const href = s.buttonHref || s.linkHref;
-  // Change these two ratios to match your banner artwork (mobile / desktop).
-  const frame = "relative block aspect-[4/3] w-full sm:aspect-[1920/700]";
+  const alt = clone ? "" : (s.title ?? "");
+
+  // Fixed banner height per screen size. Change these numbers to taste.
+  const frame =
+    "relative block w-full h-[320px] sm:h-[400px] md:h-[460px] lg:h-[540px] xl:h-[600px]";
+
+  // Which part of the image stays visible if it has to be trimmed.
+  // object-top keeps heads/faces. Use object-center to centre, object-bottom for the bottom.
+  const fit = "object-cover object-top";
 
   const image = (
     <>
       <Image
         src={s.image}
-        alt={clone ? "" : (s.title ?? "")}
+        alt={alt}
         fill
         priority={first}
         sizes="100vw"
-        className={`object-cover ${s.mobileImage ? "hidden sm:block" : ""}`}
+        className={`${fit} ${s.mobileImage ? "hidden sm:block" : ""}`}
       />
       {s.mobileImage && (
-        <Image src={s.mobileImage} alt={clone ? "" : (s.title ?? "")} fill priority={first} sizes="100vw" className="object-cover sm:hidden" />
+        <Image src={s.mobileImage} alt={alt} fill priority={first} sizes="100vw" className={`${fit} sm:hidden`} />
       )}
     </>
   );
