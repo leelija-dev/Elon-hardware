@@ -237,7 +237,7 @@ export function EnquiryForm({
             maxLength={1500}
             placeholder={
               type === "service"
-                ? "Model, what's happening, when it started…" : "Product, quantity, location and timeline — anything that helps us advise you."
+                ? "Model, what's happening, when it started…" : "Tell us the products, sizes, finishes, estimated quantities or project requirements you are looking for."
             }
             className={`${fieldCls} resize-y py-3`}
             {...aria("message")}
@@ -257,7 +257,7 @@ export function EnquiryForm({
       {variant !== "dark" && (
         <label className="flex items-start gap-2.5 text-sm text-muted">
           <input type="checkbox" name="whatsapp" defaultChecked className="mt-0.5 size-[18px] accent-ink" />
-          Send me updates on WhatsApp about my enquiry.
+         I agree to receive updates about this enquiry on WhatsApp.
         </label>
       )}
 
@@ -276,7 +276,7 @@ export function EnquiryForm({
           ? "Sending…"
           : (submitLabel ??
             (type === "quote"
-                ? "Get Product Details"
+                ? "SUBMIT ENQUIRY"
                 : type === "service"
                   ? "Submit Service Request"
                   : "Submit Query"))}

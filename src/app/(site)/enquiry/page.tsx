@@ -10,14 +10,14 @@ import { getCategories, getCategory, getProduct, getProductOptions } from "@/lib
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Get a Quote",
+  title: "TRADE & PRODUCT ENQUIRIES",
   description: "Request a quote for home lockers, digital locks and hardware from ELON HARDWARE.",
 };
 
 const steps = [
-  { title: "Tell us what you need", text: "Choose a product or range and share a few details." },
-  { title: "We call you back", text: `Our team responds within ${site.responseTime} with options and prices.` },
-  { title: "Compare, then decide", text: "Review the options and prices — with no obligation to buy." },
+  { title: "Share Your Requirement", text: "Tell us which products or categories you are interested in." },
+  { title: "Our Team Contacts You", text: `We will review your enquiry and respond with relevant product information.` },
+  { title: "Discuss Supply & Pricing", text: "Confirm available models, quantities, pricing and delivery details with our team." },
 ];
 
 export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry">) {
@@ -27,8 +27,8 @@ export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry"
   const product = one("product") ? await getProduct(one("product")!) : null;
   const interest = one("interest") ? await getCategory(one("interest")!) : null;
 
-  const title = product ? "Get a quote for" : "Get a";
-  const accent = product ? `${product.name}.` : "quote.";
+  const title = product ? "Get a quote for" : "Tell us ";
+  const accent = product ? `${product.name}.` : "what your business needs.";
 
   return (
     <>
@@ -40,7 +40,8 @@ export default async function EnquiryPage({ searchParams }: PageProps<"/enquiry"
         eyebrow="Product enquiries"
         title={title}
         accent={accent}
-        text="Share your requirement and our team will get back to you with the right options, prices and availability for your space."
+        text="Looking for hardware for your store, furniture production or interior project? Share your requirements and our team
+will contact you with relevant product information, availability and pricing."
       />
 
       <section className="container-site grid gap-10 py-14 lg:grid-cols-[1.5fr_1fr]">
