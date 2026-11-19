@@ -38,9 +38,11 @@ export default async function ServicesPage() {
           { href: "/services", label: "Services" },
         ]}
         eyebrow="Services"
-        title="Here for you,"
-        accent="long after you choose."
-        text="Installation, support, warranty and care — everything you need to enjoy your ELON HARDWARE products for years."
+        title="Product support "
+        accent="& customer assistance"
+        text="ELON HARDWARE supports trade customers with product information, selection guidance and assistance with
+              product-related enquiries. Support availability and warranty coverage depend on the product and its applicable
+              terms."
       >
         <nav aria-label="Services" className="mt-9 flex flex-wrap gap-3 text-[14px] font-bold">
           {[
@@ -59,10 +61,10 @@ export default async function ServicesPage() {
       <section id="support" className="container-site grid scroll-mt-6 gap-10 py-16 lg:grid-cols-[1fr_1.3fr]">
         <div>
           <div className="eyebrow">01 / Service support</div>
-          <h2 className="display-md mt-3">Something not right? Tell us.</h2>
+          <h2 className="display-md mt-3">Need product assistance?</h2>
           <p className="mt-5 max-w-[440px] text-[16px] leading-[1.75] text-muted">
-            Raise a service request for access issues, alarms, batteries or installation. Mention the model and what&rsquo;s happening —
-            our team will call you within {site.responseTime} and arrange a visit if needed.
+            For product questions, installation guidance or an issue with a supplied item, share the product name or code,
+            purchase details and a description of your requirement. Our team will guide you on the next steps.
           </p>
           <ul className="mt-6 space-y-2 text-[15px]">
             {site.phoneHref && <li>Call: <a className="font-bold" href={site.phoneHref}>{site.phone}</a></li>}
@@ -79,51 +81,90 @@ export default async function ServicesPage() {
         <div className="container-site grid gap-10 py-16 lg:grid-cols-[1fr_1.3fr]">
           <div>
             <div className="eyebrow">02 / Warranty</div>
-            <h2 className="display-md mt-3">Covered with confidence.</h2>
+            <h2 className="display-md mt-3">Product warranty</h2>
           </div>
           <div className="space-y-4 text-[16px] leading-[1.75] text-muted">
             <p>
-              ELON HARDWARE products come with a manufacturer warranty of {site.warranty} from the date of purchase. Keep your invoice —
-              you&rsquo;ll need it for any warranty claim.
+              Warranty coverage, duration and conditions vary by product.
             </p>
-            <p>To make a claim, raise a service request above with your model and invoice details and our team will guide you.</p>
-            <p className="text-[13px]">Exact warranty terms vary by product — ask our team for the terms of your model.</p>
+            <p> Please refer to the warranty terms supplied with the
+                relevant product or contact our team with your product code and invoice details.</p>
+            
           </div>
         </div>
       </section>
 
       <section id="installation" className="container-site scroll-mt-6 py-16">
-        <div className="eyebrow">03 / How to install</div>
-        <h2 className="display-md mt-3">Professional installation, step by step.</h2>
-        <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {installSteps.map((s, i) => (
-            <li key={s.title} className="border-t-2 border-ink pt-5">
-              <span className="text-[12px] font-bold text-gold-text">0{i + 1}</span>
-              <h3 className="mt-2 font-serif text-[22px] font-normal">{s.title}</h3>
-              <p className="mt-2 text-[15px] leading-[1.7] text-muted">{s.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+  <div className="grid gap-10 border-t border-line pt-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    {/* Left: heading */}
+    <div>
+      <div className="eyebrow">03 / How to install</div>
+      <h2 className="mt-3 font-serif text-[28px] leading-[1.2] font-normal md:text-[36px]">
+        Installation information.
+      </h2>
+      <span aria-hidden="true" className="mt-6 block h-[3px] w-12 bg-gold" />
+    </div>
+
+    {/* Right: content */}
+    <div>
+      <p className="max-w-[560px] text-[16px] leading-[1.75] text-muted md:text-[17px]">
+        Installation requirements differ by product. Please review the product instructions and confirm compatibility,
+        dimensions and fitting requirements before installation.
+      </p>
+
+      <ul className="mt-8 grid gap-4 sm:grid-cols-3">
+        {[
+          ["01", "Compatibility", "Confirm the product suits your application."],
+          ["02", "Dimensions", "Check sizes and clearances before fitting."],
+          ["03", "Fitting requirements", "Follow the product instructions."],
+        ].map(([n, t, s]) => (
+          <li key={n} className="rounded-[4px] border border-line bg-white px-5 py-6">
+            <span className="text-[12px] font-bold text-gold-text">{n}</span>
+            <h3 className="mt-3 font-serif text-[20px] font-normal">{t}</h3>
+            <p className="mt-2 text-[14px] leading-[1.6] text-muted">{s}</p>
+          </li>
+        ))}
+      </ul>
+
+      
+    </div>
+  </div>
+</section>
 
       <section id="care" className="scroll-mt-6 bg-mist">
-        <div className="container-site grid gap-10 py-16 lg:grid-cols-[1fr_1.3fr]">
-          <div>
-            <div className="eyebrow">04 / Care &amp; maintenance</div>
-            <h2 className="display-md mt-3">Small habits. Lasting performance.</h2>
-          </div>
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {care.map((c) => (
-              <li key={c} className="flex gap-3 rounded-[4px] bg-white p-5 text-[15px] leading-[1.6]">
-                <Icon name="check" size={18} strokeWidth={2.4} className="mt-0.5 shrink-0 text-gold-text" />
-                {c}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+  <div className="container-site grid gap-10 py-16 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+    {/* Left: heading + intro */}
+    <div>
+      <div className="eyebrow">04 / Care &amp; maintenance</div>
+      <h2 className="mt-3 font-serif text-[28px] leading-[1.2] font-normal md:text-[36px]">
+        Care &amp; maintenance.
+      </h2>
+      <span aria-hidden="true" className="mt-6 block h-[3px] w-12 bg-gold" />
+      <p className="mt-6 max-w-[460px] text-[16px] leading-[1.75] text-muted md:text-[17px]">
+        Use and maintain each product according to its material, finish and manufacturer instructions.
+      </p>
 
-      <CtaBand eyebrow="We're here to help" title="It starts with a conversation." href="/contact" label="Get in touch" variant="rect" />
+      <div className="mt-6 flex max-w-[460px] items-start gap-3 border-l-[3px] border-gold bg-white px-5 py-4 text-[14px] leading-[1.65]">
+        <Icon name="shield" size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-gold-text" />
+        <p className="m-0">
+          Avoid harsh chemicals or abrasive cleaning methods unless specifically approved for the product.
+        </p>
+      </div>
+    </div>
+
+    {/* Right: care tips */}
+    <ul className="grid content-start gap-4 sm:grid-cols-2">
+      {care.map((c) => (
+        <li key={c} className="flex gap-3 rounded-[4px] bg-white p-5 text-[15px] leading-[1.6]">
+          <Icon name="check" size={18} strokeWidth={2.4} className="mt-0.5 shrink-0 text-gold-text" />
+          {c}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+      {/* <CtaBand eyebrow="We're here to help" title="It starts with a conversation." href="/contact" label="Get in touch" variant="rect" /> */}
     </>
   );
 }
